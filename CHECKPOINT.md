@@ -8,7 +8,7 @@ Branch `demo-ready`, tag `checkpoint-3`. Pushed to `origin` (`https://github.com
 |---|---|
 | `docker compose up` (Postgres + API + web) | Done; verified with `--wait` and a smoke test |
 | Passing tests | Done: 51 pytest (SQLite and Postgres 16), 11 Jest |
-| GitHub Actions CI with a secret scan | Done: `.github/workflows/ci.yml`, validated with actionlint; first run happens on push |
+| GitHub Actions CI with a secret scan | Done: `.github/workflows/ci.yml`, validated with actionlint; first run on GitHub passed |
 | Health endpoints | Done: `/health` (liveness), `/ready` (database) |
 | Seed / demo data | Done: 3 sessions, seeded on start when `SEED_DEMO_DATA=true` |
 | `DEMO.md` | Done: 3–5 minute script and 10 Q&As; its curl snippets were run against the local stack |
@@ -60,16 +60,17 @@ Runs on pushes to `main` and `demo-ready`, on pull requests, and manually.
 
 Ruff needs `--extend-exclude tools` locally only because of an untracked `tools/build_architecture_pdf.py` (not part of the repo); CI checks out tracked files only. The interview runner was not clicked through in the browser this time; it is covered by `InterviewRunner.test.js` and the API calls above.
 
-Not verified: the GitHub Actions run itself (it starts with the push), anything on Render or Vercel, and Groq (no key was used; the default `GROQ_MODELS` IDs were not checked against Groq's current model list). No Docker image-size or build-time numbers are recorded, by choice.
+GitHub Actions: the first run on `demo-ready` after the push ([run 41634959615](https://github.com/squidchemistry/interviewcoach/actions/runs/41634959615), commit `7098e5c`) passed all four jobs (backend, frontend, docker, secret-scan).
+
+Not verified: anything on Render or Vercel, and Groq (no key was used; the default `GROQ_MODELS` IDs were not checked against Groq's current model list). No Docker image-size or build-time numbers are recorded, by choice.
 
 ## Your remaining steps
 
 1. **Revoke the leaked Groq key** (committed in `e05a372` and `3a28624`) in the Groq console, then create a new one. Never put it in git.
-2. **Check the first CI run** on GitHub → Actions for `demo-ready`.
-3. **Render**: New → Blueprint → this repo. `render.yaml` deploys `main`; change `branch:` to `demo-ready` if you deploy before merging. Enter `GROQ_API_KEY` and, for now, `CORS_ORIGINS=http://localhost:3000`. Check `https://<service>.onrender.com/ready`.
-4. **Vercel**: import the repo, Root Directory `frontend`, env var `REACT_APP_API_URL=https://<service>.onrender.com`, deploy.
-5. **CORS**: set `CORS_ORIGINS` on Render to the Vercel URL (exact origin, no trailing slash).
-6. **Merge `demo-ready` into `main`** with a pull request once CI is green; then add the live URLs to the README.
+2. **Render**: New → Blueprint → this repo. `render.yaml` deploys `main`; change `branch:` to `demo-ready` if you deploy before merging. Enter `GROQ_API_KEY` and, for now, `CORS_ORIGINS=http://localhost:3000`. Check `https://<service>.onrender.com/ready`.
+3. **Vercel**: import the repo, Root Directory `frontend`, env var `REACT_APP_API_URL=https://<service>.onrender.com`, deploy.
+4. **CORS**: set `CORS_ORIGINS` on Render to the Vercel URL (exact origin, no trailing slash).
+5. **Merge `demo-ready` into `main`** with a pull request once CI is green; then add the live URLs to the README.
 
 ## Known limitations
 
