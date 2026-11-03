@@ -1,39 +1,33 @@
-# Multi-stage build for integrated frontend + backend deployment
+# Backend image (FastAPI + Alembic). The frontend has its own image in frontend/.
+#
+# Stage 1 installs dependencies into a virtualenv; stage 2 copies only that
+# virtualenv and the app code, so pip, build caches and the frontend toolchain
+# never reach the runtime image.
 
-# Stage 1: Build frontend
-FROM node:20-alpine AS frontend-builder
-WORKDIR /app/frontend
-COPY frontend/package*.json ./
-RUN npm install
-COPY frontend/ ./
-RUN npm run build
-
-# Stage 2: Python backend with frontend static files
-FROM python:3.11-slim
-
-WORKDIR /app
-
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# Install Python dependencies
+FROM python:3.11-slim AS builder
+ENV PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# pip and setuptools are only needed to install; removing them saves ~28 MB.
+RUN pip install -r requirements.txt \
+ && pip uninstall -y pip setuptools
 
-# Copy backend code
-COPY app/ ./app/
-COPY main.py .
-
-# Copy built frontend from builder stage
-COPY --from=frontend-builder /app/frontend/build ./static
-
-# Install a simple HTTP server to serve static files (or use FastAPI static files)
-RUN pip install aiofiles
-
-ENV APP_ENV=production
-ENV APP_NAME="AI Interview Coach"
-ENV APP_VERSION=0.1.0
-
+FROM python:3.11-slim AS runtime
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PATH="/opt/venv/bin:$PATH" \
+    APP_ENV=production
+RUN useradd --create-home --uid 10001 app
+WORKDIR /app
+COPY --from=builder /opt/venv /opt/venv
+COPY alembic.ini main.py ./
+COPY migrations ./migrations
+COPY app ./app
+COPY scripts/start.sh ./scripts/start.sh
+USER app
 EXPOSE 8000
-
-CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+  CMD python -c "import os,urllib.request; urllib.request.urlopen('http://127.0.0.1:%s/health' % os.environ.get('PORT','8000'), timeout=3)" || exit 1
+CMD ["sh", "/app/scripts/start.sh"]
