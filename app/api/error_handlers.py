@@ -11,7 +11,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from app.shared.errors import AppError
+from app.shared.errors import AppError, RateLimitedError
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +42,10 @@ def register_error_handlers(app: FastAPI) -> None:
     async def app_error_handler(request: Request, exc: AppError) -> JSONResponse:
         if exc.status_code >= 500:
             logger.warning("app_error", extra={"code": exc.code, "path": request.url.path})
-        return JSONResponse(status_code=exc.status_code, content=exc.to_dict())
+        headers = None
+        if isinstance(exc, RateLimitedError):
+            headers = {"Retry-After": str(exc.retry_after_seconds)}
+        return JSONResponse(status_code=exc.status_code, content=exc.to_dict(), headers=headers)
 
     @app.exception_handler(RequestValidationError)
     async def validation_error_handler(request: Request, exc: RequestValidationError) -> JSONResponse:

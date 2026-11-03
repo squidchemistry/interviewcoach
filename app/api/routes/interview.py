@@ -7,6 +7,7 @@ Nothing here is persisted; see `sessions.py` for the stored workflow.
 from fastapi import APIRouter, Depends
 
 from app.api.dependencies import get_ai_service
+from app.api.rate_limit import limit_llm_calls
 from app.application.interview.dto import (
     EvaluationRequest,
     EvaluationResponse,
@@ -19,7 +20,8 @@ from app.application.interview.use_cases import (
     GenerateQuestionsUseCase,
 )
 
-router = APIRouter()
+# Both endpoints call the LLM, so the whole router is rate limited.
+router = APIRouter(dependencies=[Depends(limit_llm_calls)])
 
 
 @router.post("/generate-questions", response_model=QuestionResponse)

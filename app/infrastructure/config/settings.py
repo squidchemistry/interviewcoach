@@ -53,6 +53,9 @@ class Settings(BaseSettings):
     db_connect_timeout_seconds: int = Field(default=5, alias="DB_CONNECT_TIMEOUT_SECONDS")
     seed_demo_data: bool = Field(default=False, alias="SEED_DEMO_DATA")
 
+    # Max LLM-backed requests per client IP per minute (0 disables).
+    rate_limit_per_minute: int = Field(default=20, alias="RATE_LIMIT_PER_MINUTE")
+
     # CORS settings
     cors_origins: str = Field(
         default="http://localhost:3000,http://localhost:5173",
