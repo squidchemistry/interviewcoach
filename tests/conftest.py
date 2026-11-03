@@ -48,6 +48,7 @@ def settings(migrated_db: str) -> Settings:
         LLM_PROVIDER="mock",
         GROQ_API_KEY="",
         CORS_ORIGINS="http://localhost:3000",
+        RATE_LIMIT_PER_MINUTE=1000,
         _env_file=None,
     )
 

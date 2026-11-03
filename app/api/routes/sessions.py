@@ -5,6 +5,7 @@ FastAPI routes for persistent interview sessions.
 from fastapi import APIRouter, Depends, Query, status
 
 from app.api.dependencies import get_ai_service, get_session_repository
+from app.api.rate_limit import limit_llm_calls
 from app.application.interview.dto import (
     CreateSessionRequest,
     SessionPage,
@@ -33,7 +34,12 @@ def _unwrap(result: Result):
     return result.value
 
 
-@router.post("", response_model=SessionResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "",
+    response_model=SessionResponse,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(limit_llm_calls)],
+)
 def create_session(
     request: CreateSessionRequest,
     ai_service: AIService = Depends(get_ai_service),
@@ -66,6 +72,7 @@ def get_session(
     "/{session_id}/answers",
     response_model=SubmitAnswerResponse,
     status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(limit_llm_calls)],
 )
 def submit_answer(
     session_id: str,

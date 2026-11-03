@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.error_handlers import register_error_handlers
+from app.api.rate_limit import SlidingWindowRateLimiter
 from app.api.routes import api_router, health_router
 from app.infrastructure.ai import build_ai_service
 from app.infrastructure.config.settings import Settings, get_settings
@@ -38,6 +39,7 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
     app.state.engine = engine
     app.state.session_factory = build_session_factory(engine)
     app.state.ai_service = build_ai_service(settings)
+    app.state.rate_limiter = SlidingWindowRateLimiter(settings.rate_limit_per_minute)
 
     app.add_middleware(
         CORSMiddleware,

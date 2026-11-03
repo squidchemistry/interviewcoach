@@ -52,3 +52,12 @@ class InfrastructureError(AppError):
     status_code = HTTPStatus.SERVICE_UNAVAILABLE
     code = "infrastructure_error"
 
+
+
+class RateLimitedError(AppError):
+    status_code = HTTPStatus.TOO_MANY_REQUESTS
+    code = "rate_limited"
+
+    def __init__(self, message: str, *, retry_after_seconds: int, details: dict[str, Any] | None = None) -> None:
+        super().__init__(message, details=details)
+        self.retry_after_seconds = retry_after_seconds
