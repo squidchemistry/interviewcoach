@@ -1,70 +1,34 @@
-# Getting Started with Create React App
+# AI Interview Coach: frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+React 19 single-page app (Create React App) for the AI Interview Coach API. See the [root README](../README.md) for the whole project.
 
-## Available Scripts
+## Run
 
-In the project directory, you can run:
+```bash
+cp .env.example .env.local   # REACT_APP_API_URL=http://localhost:8000
+npm ci
+npm start                    # http://localhost:3000
+```
 
-### `npm start`
+The backend must be running (`docker compose up` in the repo root starts everything).
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Test and build
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```bash
+CI=true npm test -- --watchAll=false
+npm run build
+```
 
-### `npm test`
+Tests use Jest + React Testing Library with the API client mocked. `package.json` maps the React Router 7 entry points for CRA's Jest 27, and `src/setupTests.js` polyfills `TextEncoder`.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Configuration
 
-### `npm run build`
+| Variable | When | Purpose |
+|---|---|---|
+| `REACT_APP_API_URL` | build time | Base URL of the API (inlined by CRA). Set it in the Vercel project settings. |
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Deploy (Vercel)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Import the repo in Vercel, set **Root Directory** to `frontend`, and add `REACT_APP_API_URL` = your Render API URL. `vercel.json` sets the build and the SPA rewrite.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Routes are documented in [ROUTES.md](ROUTES.md).

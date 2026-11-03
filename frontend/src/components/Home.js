@@ -74,18 +74,11 @@ function Home() {
           }}>📊</div>
           <h3 style={{ marginBottom: '15px' }}>Track Progress</h3>
           <p style={{ color: 'var(--bauhaus-gray)', marginBottom: '25px', lineHeight: '1.6' }}>
-            Review your performance metrics and see how you improve over time
+            Every session is saved. Review past feedback and see how you improve over time
           </p>
-          <div style={{ 
-            padding: '12px 24px',
-            background: 'var(--bauhaus-yellow)',
-            border: '3px solid var(--bauhaus-black)',
-            fontWeight: 'bold',
-            display: 'inline-block',
-            opacity: '0.6'
-          }}>
-            Available After Interview
-          </div>
+          <Link to="/history" className="button-link">
+            View History →
+          </Link>
         </div>
       </div>
 
