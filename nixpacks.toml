@@ -1,7 +1,0 @@
-[phases.setup]
-nixPkgs = ["git"]
-
-[phases.build]
-cmds = [
-  "git submodule update --init --recursive || echo 'No submodules or already initialized'"
-]
