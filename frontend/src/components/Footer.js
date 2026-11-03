@@ -68,6 +68,15 @@ function Footer() {
                 Start Interview
               </a>
             </li>
+            <li style={{ marginBottom: '10px' }}>
+              <a href="/history" style={{
+                color: 'rgba(255, 255, 255, 0.7)',
+                textDecoration: 'none',
+                transition: 'color 0.2s'
+              }}>
+                History
+              </a>
+            </li>
           </ul>
         </div>
 

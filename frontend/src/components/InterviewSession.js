@@ -3,15 +3,23 @@ import React, { useState } from 'react';
 function InterviewSession({ question, questionNumber, totalQuestions, onSubmit }) {
   const [answer, setAnswer] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!answer.trim()) return;
 
     setSubmitting(true);
-    await onSubmit(answer);
-    setAnswer('');
-    setSubmitting(false);
+    setError('');
+    try {
+      await onSubmit(answer);
+      setAnswer('');
+    } catch (err) {
+      // Keep the typed answer so the candidate can retry.
+      setError(err.message || 'Could not submit your answer. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const progress = (questionNumber / totalQuestions) * 100;
@@ -58,6 +66,12 @@ function InterviewSession({ question, questionNumber, totalQuestions, onSubmit }
             />
           </div>
         </div>
+
+        {error && (
+          <div className="error-banner" role="alert">
+            {error}
+          </div>
+        )}
 
         <div className="button-group">
           <button type="submit" disabled={submitting || !answer.trim()}>

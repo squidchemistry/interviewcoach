@@ -1,15 +1,48 @@
+# Render Blueprint: API (Docker) + managed Postgres.
+# Render dashboard -> New -> Blueprint -> pick this repo. Values marked
+# `sync: false` are prompted for during setup and are never stored in git.
+
+databases:
+  - name: interviewcoach-db
+    plan: free
+    region: ohio
+    databaseName: interviewcoach
+    user: coach
+    postgresMajorVersion: "16"
+
 services:
   - type: web
-    name: ai-interview-coach
-    env: docker
-    region: ohio
+    name: ai-interview-coach-api
+    runtime: docker
     plan: free
-    branch: main
-    repo: https://github.com/squidchemistry/interviewcoach
+    region: ohio
+    branch: main            # change to demo-ready to deploy before merging
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /ready # checks the DB; a deploy only goes live once this returns 200
+    autoDeploy: true
     envVars:
+      - key: DATABASE_URL   # postgres:// URL; the app adds the psycopg driver
+        fromDatabase:
+          name: interviewcoach-db
+          property: connectionString
+      - key: APP_ENV
+        value: production
+      - key: ENABLE_DOCS    # keep Swagger UI on for the demo
+        value: "true"
+      - key: LLM_PROVIDER   # auto: Groq when GROQ_API_KEY is set, else the mock
+        value: auto
       - key: GROQ_API_KEY
         sync: false
-      - key: CORS_ORIGINS
-        value: "*"
-      - key: APP_ENV
-        value: "production"
+      - key: GROQ_MODELS
+        value: llama-3.3-70b-versatile,openai/gpt-oss-20b,llama-3.1-8b-instant
+      - key: CORS_ORIGINS   # your Vercel URL, e.g. https://ai-interview-coach.vercel.app
+        sync: false
+      - key: RATE_LIMIT_PER_MINUTE
+        value: "20"
+      - key: DB_POOL_SIZE
+        value: "5"
+      - key: DB_MAX_OVERFLOW
+        value: "5"
+      - key: SEED_DEMO_DATA # idempotent: only seeds an empty database
+        value: "true"

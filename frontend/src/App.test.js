@@ -1,8 +1,15 @@
 import { render, screen } from '@testing-library/react';
-import App from './App';
+import { MemoryRouter } from 'react-router-dom';
+import { AppRoutes } from './App';
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+test('home page links to the interview and the history page', () => {
+  render(
+    <MemoryRouter initialEntries={['/']}>
+      <AppRoutes />
+    </MemoryRouter>
+  );
+
+  expect(screen.getByRole('heading', { level: 1, name: /AI Interview Coach/i })).toBeInTheDocument();
+  expect(screen.getAllByRole('link', { name: /History/i })[0]).toHaveAttribute('href', '/history');
+  expect(screen.getAllByRole('link', { name: /Start Interview/i })[0]).toHaveAttribute('href', '/interview');
 });
