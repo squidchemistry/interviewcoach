@@ -1,25 +1,29 @@
+from typing import Optional
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from pathlib import Path
 
 from app.api.error_handlers import register_error_handlers
-from app.api.routes import api_router
-from app.infrastructure.config.settings import get_settings
+from app.api.routes import api_router, health_router
+from app.infrastructure.ai import build_ai_service
+from app.infrastructure.config.settings import Settings, get_settings
 from app.infrastructure.logging.logger import configure_logging
+from app.infrastructure.persistence.database import build_engine, build_session_factory
 
 
-def create_app() -> FastAPI:
+def create_app(settings: Optional[Settings] = None) -> FastAPI:
     """
-    Application factory for the FastAPI app.
+    Application factory and composition root.
 
     This wires together:
     - Settings and logging configuration.
-    - API routers.
-    - Global exception handlers.
+    - The database engine (one connection pool per process) and AI provider.
+    - API routers and global exception handlers.
     - CORS middleware for frontend integration.
+
+    Tests call `create_app(Settings(...))` to point at a test database.
     """
-    settings = get_settings()
+    settings = settings or get_settings()
     configure_logging(settings)
 
     app = FastAPI(
@@ -29,36 +33,26 @@ def create_app() -> FastAPI:
         redoc_url="/redoc" if settings.enable_docs else None,
     )
 
-    # Enable CORS for React frontend
-    cors_origins = settings.cors_origins.split(",") if settings.cors_origins else []
+    engine = build_engine(settings)
+    app.state.settings = settings
+    app.state.engine = engine
+    app.state.session_factory = build_session_factory(engine)
+    app.state.ai_service = build_ai_service(settings)
+
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=cors_origins,
-        allow_credentials=True,
-        allow_methods=["*"],
+        allow_origins=settings.cors_origin_list,
+        allow_credentials=False,
+        allow_methods=["GET", "POST", "OPTIONS"],
         allow_headers=["*"],
     )
 
-    # Health check endpoint (before static files)
-    @app.get("/ping")
-    def ping():
-        """Health check endpoint."""
-        return {"status": "alive"}
-
-    # Include versioned API router
+    app.include_router(health_router, tags=["health"])
     app.include_router(api_router, prefix="/v1")
 
-    # Register centralized error handlers
     register_error_handlers(app)
-
-    # Serve static files (frontend) in production - mount last to avoid conflicts
-    static_dir = Path(__file__).parent / "static"
-    if static_dir.exists():
-        # Mount static files, but exclude API routes
-        app.mount("/", StaticFiles(directory=str(static_dir), html=True), name="static")
 
     return app
 
 
 app = create_app()
-
