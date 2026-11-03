@@ -1,15 +1,50 @@
+# One-command local stack: Postgres + API + frontend.
+#   docker compose up --build
+# Frontend: http://localhost:3000   API docs: http://localhost:8000/docs
+# Without GROQ_API_KEY the API uses the deterministic mock LLM.
+name: interviewcoach
+
 services:
-  app:
-    build: .
-    ports:
-      - "8000:8000"
+  db:
+    image: postgres:16-alpine
     environment:
-      APP_ENV: production
-      APP_NAME: "AI Interview Coach"
-      APP_VERSION: "0.1.0"
+      POSTGRES_USER: coach
+      POSTGRES_PASSWORD: coach
+      POSTGRES_DB: interviewcoach
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U coach -d interviewcoach"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: .
+    environment:
+      APP_ENV: development
       ENABLE_DOCS: "true"
-      GROQ_API_KEY: ${GROQ_API_KEY}
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://localhost:5173,http://localhost:8000}
-    env_file:
-      - .env
-    restart: unless-stopped
+      DATABASE_URL: postgresql+psycopg://coach:coach@db:5432/interviewcoach
+      LLM_PROVIDER: ${LLM_PROVIDER:-auto}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      GROQ_MODELS: ${GROQ_MODELS:-llama-3.3-70b-versatile,openai/gpt-oss-20b,llama-3.1-8b-instant}
+      CORS_ORIGINS: http://localhost:${WEB_PORT:-3000}
+      SEED_DEMO_DATA: "true"
+    ports:
+      - "${API_PORT:-8000}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        REACT_APP_API_URL: http://localhost:${API_PORT:-8000}
+    ports:
+      - "${WEB_PORT:-3000}:80"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
