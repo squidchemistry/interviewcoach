@@ -1,8 +1,7 @@
 # Frontend image: build the React app with Node, serve the static files with nginx.
 # Only the compiled build/ folder reaches the final stage (no node_modules).
 
-# Node 24 ships npm 11, the version that wrote package-lock.json (npm 10 rejects it).
-FROM node:24-alpine AS build
+FROM node:22-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund

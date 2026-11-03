@@ -101,6 +101,28 @@ function Navbar() {
             )}
           </Link>
 
+          <Link to="/history" style={{
+            color: isActive('/history') ? 'var(--bauhaus-yellow)' : 'white',
+            textDecoration: 'none',
+            fontWeight: '600',
+            fontSize: '1rem',
+            transition: 'color 0.2s',
+            position: 'relative',
+            padding: '5px 0'
+          }}>
+            History
+            {isActive('/history') && (
+              <span style={{
+                position: 'absolute',
+                bottom: '-8px',
+                left: 0,
+                right: 0,
+                height: '3px',
+                background: 'var(--bauhaus-yellow)'
+              }}></span>
+            )}
+          </Link>
+
           <a 
             href="https://github.com/squidchemistry" 
             target="_blank" 
@@ -193,8 +215,21 @@ function Navbar() {
           >
             Start Interview
           </Link>
-          <a 
-            href="https://github.com/your-username" 
+          <Link
+            to="/history"
+            onClick={() => setMobileMenuOpen(false)}
+            style={{
+              color: isActive('/history') ? 'var(--bauhaus-yellow)' : 'white',
+              textDecoration: 'none',
+              fontWeight: '600',
+              fontSize: '1rem',
+              padding: '10px'
+            }}
+          >
+            History
+          </Link>
+          <a
+            href="https://github.com/squidchemistry"
             target="_blank" 
             rel="noopener noreferrer"
             style={{

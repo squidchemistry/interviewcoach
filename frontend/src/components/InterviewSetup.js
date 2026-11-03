@@ -1,28 +1,25 @@
 import React, { useState } from 'react';
-import { interviewAPI } from '../services/api';
+import { useNavigate } from 'react-router-dom';
+import { sessionsAPI } from '../services/api';
 
-function InterviewSetup({ onStart }) {
+function InterviewSetup() {
+  const navigate = useNavigate();
   const [role, setRole] = useState('');
   const [experience, setExperience] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
 
     try {
-      const data = await interviewAPI.generateQuestions(role, experience);
-      const questions = data.questions || [];
-
-      if (questions.length === 0) {
-        throw new Error('No questions generated');
-      }
-
-      onStart(role, experience, questions);
-    } catch (error) {
-      console.error('Error generating questions:', error);
-      alert('Failed to generate questions. Please check if the backend is running and try again.');
-    } finally {
+      // Creates a persisted session; questions come back with their IDs.
+      const session = await sessionsAPI.create(role, experience);
+      navigate(`/sessions/${session.id}/run`, { state: { session } });
+    } catch (err) {
+      setError(err.message || 'Failed to generate questions. Please try again.');
       setLoading(false);
     }
   };
@@ -76,6 +73,12 @@ function InterviewSetup({ onStart }) {
               <option value="10+ years">10+ years (Lead/Principal)</option>
             </select>
           </div>
+
+          {error && (
+            <div className="error-banner" role="alert">
+              {error}
+            </div>
+          )}
 
           <button type="submit" disabled={loading}>
             {loading ? 'Generating Questions...' : 'Generate Interview Questions'}
