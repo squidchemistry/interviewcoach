@@ -10,7 +10,7 @@ ENV PIP_NO_CACHE_DIR=1 \
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 COPY requirements.txt .
-# pip and setuptools are only needed to install; removing them saves ~28 MB.
+# pip and setuptools are only needed to install, so they stay out of the runtime image.
 RUN pip install -r requirements.txt \
  && pip uninstall -y pip setuptools
 
