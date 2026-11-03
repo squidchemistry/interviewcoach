@@ -390,7 +390,7 @@ Generated artifacts (`frontend/build`, `frontend/node_modules`, `.venv`,
 | `.env.example` | Every setting, with safe defaults |
 | `.github/workflows/ci.yml` | Continuous integration |
 | `README.md`, `DEMO.md`, `CHECKPOINT.md` | Overview and setup, demo script and Q&A, build log |
-| `RESUME_SKILLS_SECTION.md`, `SOCIAL_MEDIA_CONTENT.md` | Presentation material (not technical docs) |
+| `.gitleaksignore` | The two known, already-public secret-scan findings |
 
 ### Backend package
 

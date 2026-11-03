@@ -1,246 +1,196 @@
-# 🎯 AI Interview Coach
+# AI Interview Coach
 
-> AI-powered interview preparation platform to help you ace your next technical interview
+[![CI](https://github.com/squidchemistry/interviewcoach/actions/workflows/ci.yml/badge.svg?branch=demo-ready)](https://github.com/squidchemistry/interviewcoach/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-[![Live Demo](https://img.shields.io/badge/demo-live-success)](https://your-app.railway.app)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![React](https://img.shields.io/badge/react-18.0+-61dafb.svg)](https://reactjs.org/)
+Practice technical interviews with an AI interviewer. Pick a role and experience level, answer generated questions one at a time, and get a score (1–10), strengths, weaknesses and an improved answer for each. Every session is saved, so you can leave, come back, and review your history.
 
----
+The backend is a FastAPI service in clean-architecture layers with PostgreSQL. The LLM is Groq, behind a deterministic mock provider, so the whole stack runs and is tested without an API key.
 
-## ✨ Features
+## Features
 
-- 🤖 **AI-Powered Questions** - Generate customized interview questions based on role and experience
-- 📊 **Smart Evaluation** - Get detailed feedback with scores, strengths, and improvement suggestions
-- 🔥 **Streak Tracking** - Stay motivated with daily practice streaks *(Coming Soon)*
-- 👤 **User Profiles** - Track your progress and showcase your achievements *(Coming Soon)*
-- 🔐 **Secure Authentication** - Google OAuth and email/password login *(Coming Soon)*
-- 📈 **Admin Dashboard** - Monitor usage, analytics, and system health *(Coming Soon)*
+- **Persisted interview sessions**: questions, answers and evaluations are stored in Postgres; a refresh resumes where you left off.
+- **History** with pagination, per-session progress and average score, and a results page with a server-computed summary.
+- **Groq with model fallback**: an ordered model list with timeouts and retries; if a model is retired or failing, the next one is used.
+- **Mock LLM provider**: deterministic and offline, used automatically when no `GROQ_API_KEY` is set.
+- **Concurrency-safe answers**: a database unique constraint guarantees one answer per question, even for simultaneous requests (201 vs 409).
+- **Per-IP rate limiting** on the endpoints that call the LLM, with `429` and `Retry-After`.
+- **Liveness and readiness probes** (`/health`, `/ready`), JSON logs, one error shape for every failure.
+- **Alembic migrations**, run automatically on container start, with a test that catches model/migration drift.
+- **One-command local stack** (`docker compose up`), CI on every push, Render Blueprint and Vercel config for deployment.
 
----
+## Architecture
 
-## 🚀 Live Demo
+```mermaid
+flowchart LR
+    subgraph Client
+        SPA["React SPA<br/>(Vercel, or nginx locally)"]
+    end
+    subgraph API["FastAPI service (Render, Docker)"]
+        Routes["API layer<br/>routes, validation,<br/>rate limit, errors"]
+        UC["Application layer<br/>use cases + ports"]
+        Dom["Domain layer<br/>InterviewSession rules"]
+        Infra["Infrastructure<br/>SQLAlchemy repository,<br/>Groq / Mock adapters"]
+    end
+    DB[("PostgreSQL 16")]
+    Groq["Groq API"]
 
-**Try it now:** [https://passmeai.tech](https://passmeai.tech)
+    SPA -->|"JSON over HTTPS"| Routes
+    Routes --> UC --> Dom
+    Infra -. implements ports .-> UC
+    Infra --> DB
+    Infra --> Groq
+```
 
----
+Dependencies point inward: the domain and application layers import no FastAPI, SQLAlchemy or Groq code, and a test enforces it. More detail, including sequence and data-model diagrams, is in [docs/architecture.md](docs/architecture.md).
 
-## 🛠️ Tech Stack
+## Tech stack
 
-### **Backend**
-- **FastAPI** - Modern, fast web framework for building APIs
-- **Python 3.11** - Core programming language
-- **Groq API** - AI-powered question generation and evaluation (Llama 3.1)
-- **CockroachDB** - Distributed SQL database *(Coming Soon)*
-- **SQLAlchemy** - ORM for database operations
+| Area | Technology |
+|---|---|
+| API | Python 3.11, FastAPI, Pydantic v2, Uvicorn |
+| Data | PostgreSQL 16, SQLAlchemy 2.0, Alembic, psycopg 3 |
+| LLM | Groq SDK (model fallback list) and a deterministic mock |
+| Frontend | React 19, React Router 7, Create React App |
+| Tests | pytest (SQLite or Postgres), Jest + React Testing Library |
+| Delivery | Docker multi-stage images, Docker Compose, GitHub Actions, gitleaks, Render, Vercel |
 
-### **Frontend**
-- **React 18** - UI library
-- **React Router** - Client-side routing
-- **Axios** - HTTP client for API calls
+## Run locally
 
-### **DevOps**
-- **Docker** - Containerization
-- **Railway** - Cloud deployment platform
-- **GitHub Actions** - CI/CD *(Coming Soon)*
+**With Docker (recommended).** Needs Docker only.
 
----
-
-## 📦 Quick Start
-
-### **Prerequisites**
-- Python 3.11+
-- Node.js 20+
-- Docker (optional, for containerized deployment)
-- Groq API Key ([Get one here](https://console.groq.com))
-
-### **1. Clone the Repository**
 ```bash
 git clone https://github.com/squidchemistry/interviewcoach.git
 cd interviewcoach
+docker compose up --build
 ```
 
-### **2. Set Up Environment Variables**
+- App: <http://localhost:3000>
+- API docs (Swagger UI): <http://localhost:8000/docs>
+- Readiness: <http://localhost:8000/ready>
+
+This starts Postgres, the API (migrations and 3 demo sessions are applied on start) and the frontend. Without a key the API uses the mock LLM. To use Groq, create a `.env` next to `docker-compose.yml` with `GROQ_API_KEY=...` and run the command again.
+
+**Without Docker.** Needs Python 3.10+, Node 22, and a Postgres database (or set `DATABASE_URL=sqlite:///./local.db` for a quick try).
+
 ```bash
-# Create .env file
-cp .env.example .env
-
-# Add your Groq API key
-echo "GROQ_API_KEY=your_groq_api_key_here" >> .env
-```
-
-### **3. Run with Docker (Recommended)**
-```bash
-docker-compose up --build
-```
-
-The app will be available at:
-- **Frontend:** http://localhost:8000
-- **API Docs:** http://localhost:8000/docs
-- **Health Check:** http://localhost:8000/ping
-
-### **4. Or Run Locally**
-
-**Backend:**
-```bash
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run server
+python -m venv .venv
+source .venv/bin/activate            # Windows: .venv\Scripts\activate
+pip install -r requirements-dev.txt
+cp .env.example .env                 # then edit DATABASE_URL / GROQ_API_KEY
+alembic upgrade head
+python -m app.infrastructure.seed    # optional demo data
 uvicorn main:app --reload
 ```
 
-**Frontend:**
 ```bash
 cd frontend
-npm install
+cp .env.example .env.local           # REACT_APP_API_URL=http://localhost:8000
+npm ci
 npm start
 ```
 
----
+## Configuration
 
-## 📖 API Documentation
+Every setting is listed with a safe default in [.env.example](.env.example). Never commit a real `.env`. The ones that matter most:
 
-### **Generate Questions**
-```http
-POST /v1/interview/generate-questions
-Content-Type: application/json
+| Variable | Default | Purpose |
+|---|---|---|
+| `DATABASE_URL` | local Postgres | SQLAlchemy URL. `postgres://` URLs (as Render provides) are accepted |
+| `LLM_PROVIDER` | `auto` | `auto` = Groq if `GROQ_API_KEY` is set, else mock. `groq` or `mock` force one |
+| `GROQ_API_KEY` | empty | Groq key (secret) |
+| `GROQ_MODELS` | `llama-3.3-70b-versatile,openai/gpt-oss-20b,llama-3.1-8b-instant` | Models tried in order |
+| `LLM_TIMEOUT_SECONDS`, `LLM_MAX_RETRIES` | `20`, `2` | Per-call timeout and retries before falling back |
+| `CORS_ORIGINS` | `http://localhost:3000,...` | Comma-separated origins allowed to call the API |
+| `RATE_LIMIT_PER_MINUTE` | `20` | LLM-backed requests per client IP per minute; `0` disables |
+| `SEED_DEMO_DATA` | `false` | Seed demo sessions on start (only into an empty database) |
+| `DB_POOL_SIZE`, `DB_MAX_OVERFLOW` | `5`, `5` | Connection pool per process |
+| `ENABLE_DOCS` | `true` | Serve `/docs` and `/redoc` |
 
-{
-  "role": "Software Engineer",
-  "experience": "2 years"
-}
+The frontend has one build-time variable, `REACT_APP_API_URL` (see [frontend/.env.example](frontend/.env.example)).
+
+## Tests
+
+```bash
+ruff check .
+pytest                                   # SQLite, no setup needed
+TEST_DATABASE_URL=postgresql+psycopg://user:pass@localhost:5432/coach_test pytest   # against Postgres
+cd frontend && CI=true npm test -- --watchAll=false && npm run build
 ```
 
-### **Evaluate Answer**
-```http
-POST /v1/interview/evaluate
-Content-Type: application/json
+The backend suite covers the domain rules, use cases with in-memory fakes, Groq fallback with a scripted client, the mock provider, settings parsing, the layer-boundary rule, migration drift, the concurrent duplicate-answer race, rate limiting, and the API on a migrated database. The frontend tests cover the API client, routes, the history page and the interview runner.
 
-{
-  "question": "What is the difference between a list and a tuple?",
-  "answer": "A list is mutable while a tuple is immutable..."
-}
+[CI](.github/workflows/ci.yml) runs all of this on every push and pull request (pytest against a Postgres service container), builds both Docker images, starts the compose stack for a smoke test, and scans the full git history with gitleaks.
+
+## Deploy
+
+The API and its database go to **Render**, the frontend to **Vercel**. Deploy the API first, because the frontend needs its URL.
+
+**1. API + Postgres on Render (Blueprint)**
+
+1. Render dashboard → **New** → **Blueprint** → connect this repository. Render reads [render.yaml](render.yaml), which creates a free Postgres database and a Docker web service with `DATABASE_URL` wired from the database and its health check on `/ready`.
+2. `render.yaml` deploys the `main` branch. To deploy before merging, change `branch:` to `demo-ready`.
+3. When prompted, set `GROQ_API_KEY` (or leave it empty to run on the mock) and `CORS_ORIGINS` (use `http://localhost:3000` for now).
+4. When the deploy is live, open `https://<your-service>.onrender.com/ready`; it should return `"status":"ready"`.
+
+**2. Frontend on Vercel**
+
+1. Vercel → **Add New Project** → import this repository, and set **Root Directory** to `frontend`. [frontend/vercel.json](frontend/vercel.json) sets the build and the SPA rewrite.
+2. Add the environment variable `REACT_APP_API_URL` = your Render URL (no trailing slash), then deploy. It is inlined at build time, so redeploy after changing it.
+
+**3. Connect them**
+
+In Render, set `CORS_ORIGINS` to your Vercel URL, for example `https://your-app.vercel.app` (exact origin, no trailing slash; separate several with commas). The service restarts with the new value.
+
+Free-tier notes: Render's free web services sleep when idle, so the first request after a pause is slow, and free databases have a limited lifetime. Check Render's current free-tier terms.
+
+## API
+
+Interactive docs at `/docs`. Every error has the shape `{"error": {"code", "message", "details"}}`.
+
+| Method | Path | Description | Responses |
+|---|---|---|---|
+| `GET` | `/health` | Liveness: the process is up | 200 |
+| `GET` | `/ready` | Readiness: database reachable; reports the LLM provider | 200, 503 |
+| `POST` | `/v1/sessions` | Create a session; generates 1–10 questions (`num_questions`, default 5) | 201, 422, 429 |
+| `GET` | `/v1/sessions?limit=&offset=` | List sessions, newest first (`limit` 1–100, default 20) | 200, 422 |
+| `GET` | `/v1/sessions/{id}` | Session with questions, answers and evaluations | 200, 404 |
+| `POST` | `/v1/sessions/{id}/answers` | Answer one question; evaluated and stored | 201, 404, 409, 422, 429 |
+| `GET` | `/v1/sessions/{id}/summary` | Average, best and worst score, strengths and weaknesses | 200, 404 |
+| `POST` | `/v1/interview/generate-questions` | Stateless: generate questions, nothing stored | 200, 422, 429 |
+| `POST` | `/v1/interview/evaluate` | Stateless: evaluate one answer, nothing stored | 200, 422, 429 |
+
+Example:
+
+```bash
+curl -X POST localhost:8000/v1/sessions -H 'Content-Type: application/json' \
+  -d '{"role": "Backend Engineer", "experience": "2-5 years", "num_questions": 3}'
 ```
 
-**Full API documentation available at:** `/docs` when running the server
-
----
-
-## 🏗️ Project Structure
+## Project structure
 
 ```
-AI-Interview-Coach/
-├── app/                      # Backend application
-│   ├── api/                  # API routes and endpoints
-│   ├── application/          # Use cases and business logic
-│   ├── domain/               # Domain entities and rules
-│   ├── infrastructure/       # External services (AI, DB)
-│   └── shared/               # Shared utilities
-├── frontend/                 # React frontend
-│   ├── public/               # Static assets
-│   └── src/                  # React components
-├── main.py                   # FastAPI application entry point
-├── Dockerfile                # Docker configuration
-├── docker-compose.yml        # Docker Compose setup
-└── requirements.txt          # Python dependencies
+app/
+  api/             FastAPI routes, dependencies, error handlers, rate limiter
+  application/     use cases, DTOs, ports (AIService, InterviewSessionRepository)
+  domain/          InterviewSession aggregate and its rules (no framework imports)
+  infrastructure/  Groq + mock adapters, SQLAlchemy models/repository, settings, logging, seed
+  shared/          error types, Result
+migrations/        Alembic migrations
+tests/             unit/ (domain, use cases, adapters) and api/ (HTTP, DB, migrations)
+frontend/          React app (own Dockerfile, nginx.conf, vercel.json)
+scripts/start.sh   container entrypoint: migrate, seed, serve
+docs/              architecture
 ```
 
----
+## Limitations
 
-## 🌟 Upcoming Features
+- No authentication: anyone with the URL shares one session history. It's a public practice tool for now.
+- Rate-limit counters are in process memory, so the limit is per API instance. A shared store (Redis) is the upgrade for several instances.
+- LLM calls run inside the request; at higher load they would move to a job queue.
 
-- [ ] User authentication (Google OAuth + Email/Password)
-- [ ] User profiles with social links (GitHub, LinkedIn)
-- [ ] Daily practice streak tracking
-- [ ] Interview history and progress tracking
-- [ ] Admin dashboard with analytics
-- [ ] Maintenance mode
-- [ ] Performance metrics and monitoring
+See [DEMO.md](DEMO.md) for a demo script and design Q&A.
 
----
+## License
 
-## 📊 Architecture
-
-Built with **Clean Architecture** principles:
-
-- **Domain Layer** - Core business logic and entities
-- **Application Layer** - Use cases and orchestration
-- **Infrastructure Layer** - External services (AI, Database)
-- **API Layer** - HTTP endpoints and request handling
-
-This ensures:
-- ✅ Testable and maintainable code
-- ✅ Independent of frameworks and external services
-- ✅ Easy to extend with new features
-
----
-
-## 🚀 Deployment
-
-### **Deploy to Railway**
-
-1. Fork this repository
-2. Create a new project on [Railway](https://railway.app)
-3. Connect your GitHub repository
-4. Add environment variable: `GROQ_API_KEY`
-5. Deploy! 🎉
-
-**Detailed deployment guide:** [DEPLOY_TO_RAILWAY.md](./DEPLOY_TO_RAILWAY.md)
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 👨‍💻 Author
-
-**Arshv**
-
-- GitHub: [@squidchemistry](https://github.com/squidchemistry)
-- Project Link: [https://github.com/squidchemistry/interviewcoach](https://github.com/squidchemistry/interviewcoach)
-
----
-
-## 🙏 Acknowledgments
-
-- [Groq](https://groq.com) for providing the AI API
-- [FastAPI](https://fastapi.tiangolo.com/) for the amazing web framework
-- [Railway](https://railway.app) for seamless deployment
-- [CockroachDB](https://cockroachlabs.com) for the distributed database
-
----
-
-## 📧 Contact
-
-Have questions or suggestions? Feel free to open an issue or reach out!
-
----
-
-<div align="center">
-
-**⭐ Star this repo if you find it helpful!**
-
-Made with ❤️ by Arshv
-
-</div>
+MIT, see [LICENSE](LICENSE). Built by Arsh Verma ([@squidchemistry](https://github.com/squidchemistry)).
