@@ -1,15 +1,31 @@
 """
 Common API-layer dependencies.
 
-This is the right place to add cross-cutting concerns such as
-authentication/authorization dependencies (e.g. `get_current_user`),
-rate limiting hooks, or correlation ID injection.
+The composition root (`main.create_app`) puts long-lived, stateless objects
+on `app.state` (DB session factory, AI service). These dependencies hand out
+per-request objects built from them, and tests can override any of them.
 """
 
-# Example placeholder for future auth dependency:
-#
-# from fastapi import Depends, HTTPException, status
-#
-# def get_current_user(...) -> User:
-#     ...
+from collections.abc import Iterator
 
+from fastapi import Depends, Request
+from sqlalchemy.orm import Session
+
+from app.application.interview.interfaces import AIService, InterviewSessionRepository
+from app.infrastructure.persistence.repository import SqlAlchemyInterviewSessionRepository
+
+
+def get_db(request: Request) -> Iterator[Session]:
+    db = request.app.state.session_factory()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+def get_session_repository(db: Session = Depends(get_db)) -> InterviewSessionRepository:
+    return SqlAlchemyInterviewSessionRepository(db)
+
+
+def get_ai_service(request: Request) -> AIService:
+    return request.app.state.ai_service

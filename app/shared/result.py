@@ -5,7 +5,6 @@ from typing import Generic, Optional, TypeVar
 
 from .errors import AppError
 
-
 T = TypeVar("T")
 
 
@@ -30,10 +29,10 @@ class Result(Generic[T]):
         return self.error is not None
 
     @staticmethod
-    def ok(value: T) -> "Result[T]":
+    def ok(value: T) -> Result[T]:
         return Result(value=value)
 
     @staticmethod
-    def err(error: AppError) -> "Result[T]":
+    def err(error: AppError) -> Result[T]:
         return Result(error=error)
 
