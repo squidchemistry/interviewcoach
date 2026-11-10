@@ -7,6 +7,10 @@ drift fails at startup.
 
 The diagram is split into four domains for readability. Relationships across domains are repeated as stubs.
 
+> These are the design-time diagrams. The shipped schema (migrations `V1`–`V5`, 21 tables) differs in places, for
+> example one `questions` table with a `detail` jsonb column instead of per-type tables. The ER diagram of the
+> shipped schema is in [10-architecture-and-er-diagrams.md](10-architecture-and-er-diagrams.md#6-er-diagram).
+
 ## 1. Identity, profile and resume
 
 ```mermaid

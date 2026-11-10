@@ -7,13 +7,14 @@ updated as phases land.
 |---|---|---|
 | 1 | [PRD](01-prd.md) | Problem, goals, personas, MVP vs Phase-2 scope, user stories with Given/When/Then acceptance criteria |
 | 2 | [Architecture](02-architecture.md) | Stack choices + trade-offs, container diagram, component responsibilities, sequence diagrams (stream, evaluation, resume, code run), cross-cutting concerns, deployment, degradation |
-| 3 | [Data model](03-data-model.md) | Mermaid ER diagrams (4 domains, 32 tables), enums, competency weights per mode, indexes and constraints, modelling decisions |
+| 3 | [Data model](03-data-model.md) | Design-time Mermaid ER diagrams (4 domains, 32 tables as designed), enums, competency weights per mode, indexes and constraints, modelling decisions |
 | 4 | [LLD](04-lld.md) | State machine + transition table, engine (State/Factory/Observer), rounds (Strategy/Template Method), AI layer (Strategy/Decorator/Factory/Facade), evaluation pipeline, code execution, pattern index |
 | 5 | [API spec](05-api-spec.md) | Every endpoint: method, path, auth, request, response, errors; SSE event contract; error catalogue; rate-limit classes |
 | 6 | [Folder structure](06-folder-structure.md) | Backend (Maven, package-by-feature) and frontend layout, ArchUnit layer rules, naming conventions |
 | 7 | [Prompts](07-prompts.md) | Template format, injection framing, interviewer prompt per mode, turn assessment, hints, resume extraction, question generation, evaluation prompt + JSON Schema, repair loop, prompt tests |
 | 8 | [Milestones](08-milestones.md) | Phases 1–12 with deliverables, tests, verification commands and Definition of Done |
 | 9 | [Risks](09-risks.md) | 16 risks with likelihood/impact and layered mitigations |
+| 10 | [Architecture and ER diagrams (as built)](10-architecture-and-er-diagrams.md) | Diagrams drawn from the v1.0.0 code: system architecture, compose containers, backend module dependencies, session lifecycle, streamed answer flow, and the ER diagram of the 21 shipped tables |
 
 ## Key decisions at a glance
 
@@ -42,4 +43,4 @@ updated as phases land.
 | Judge0 fallback if it can't run locally | Decide after the Phase 1 spike. Hosted Judge0 CE (RapidAPI) is the least invasive fallback. |
 | AI provider | Mock until you provide a key; the Claude adapter is the primary real provider |
 | DSA languages | Python, Java, C++, JavaScript |
-| Git | No repo yet; you'll provide one later. `.gitignore` / `.gitattributes` are ready. |
+| Git | [github.com/squidchemistry/interviewcoach](https://github.com/squidchemistry/interviewcoach) |

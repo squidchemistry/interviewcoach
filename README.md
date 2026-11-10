@@ -22,7 +22,8 @@ evidence-backed feedback with progress tracking.
 | Infra | Docker Compose · GitHub Actions · nginx |
 | Tests | JUnit 5 · Mockito · AssertJ · **Testcontainers** · WireMock · ArchUnit · Vitest · Testing Library · MSW · **Playwright** |
 
-Reasons and trade-offs for each choice: [docs/02-architecture.md](docs/02-architecture.md).
+Reasons and trade-offs for each choice: [docs/02-architecture.md](docs/02-architecture.md). Architecture and ER
+diagrams of the shipped code: [docs/10-architecture-and-er-diagrams.md](docs/10-architecture-and-er-diagrams.md).
 
 ## Quick start (Docker only)
 
@@ -198,7 +199,8 @@ wildcard CORS origin or a JWT secret shorter than 32 bytes). Never commit `.env`
 [PRD](docs/01-prd.md) · [Architecture](docs/02-architecture.md) · [Data model](docs/03-data-model.md) ·
 [LLD](docs/04-lld.md) · [API spec](docs/05-api-spec.md) · [Folder structure](docs/06-folder-structure.md) ·
 [Prompts](docs/07-prompts.md) · [Milestones](docs/08-milestones.md) · [Risks](docs/09-risks.md) ·
-[Deploy](docs/deploy.md) · [Demo script](docs/demo-script.md) · [Talking points](docs/talking-points.md)
+[Deploy](docs/deploy.md) · [Demo script](docs/demo-script.md) · [Talking points](docs/talking-points.md) ·
+[Architecture and ER diagrams (as built)](docs/10-architecture-and-er-diagrams.md)
 
 ## Design decisions
 

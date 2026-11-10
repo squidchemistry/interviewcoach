@@ -27,6 +27,9 @@
 
 ## 2. System context and containers
 
+> This is the design-time diagram. The shipped v1.0.0 runs without the separate worker and object storage (see §7);
+> the as-built diagrams are in [10-architecture-and-er-diagrams.md](10-architecture-and-er-diagrams.md).
+
 ```mermaid
 flowchart LR
   subgraph Client["Browser (React SPA)"]
