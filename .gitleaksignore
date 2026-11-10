@@ -1,0 +1,5 @@
+# Known findings in the earlier (Python) history of this repository, which cannot be removed without rewriting
+# public history. A .env with a Groq API key was committed in e05a372 and 3a28624 and deleted in ca2a247; that key
+# must be treated as compromised and revoked in the Groq console. Only these two exact findings are ignored.
+e05a372e40c245c3a90e502cd736a3dfd3b2ebb8:.env:generic-api-key:2
+3a28624cf5397685bedcb914ef196965e5f4ce37:.env:generic-api-key:2
