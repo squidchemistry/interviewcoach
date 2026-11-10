@@ -1,0 +1,19 @@
+# gitleaks configuration: the default rules plus a narrow allow-list for values that are not secrets.
+# Anything else gitleaks finds still fails the CI secret scan.
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Test fixtures and documented local-dev placeholders (none are real secrets)"
+paths = [
+  # Fixed test-only signing keys (e.g. base64 of "test-secret-...") used by unit and integration tests.
+  '''^backend/src/test/''',
+]
+regexTarget = "line"
+regexes = [
+  # .env.example: base64 of "local-dev-only-jwt-secret--never-use-in-production".
+  '''JWT_SECRET=bG9jYWwtZGV2LW9ubHktand0LXNlY3JldC''',
+  # docs/deploy.md: a host:port path, not a key.
+  '''api:8081/actuator/prometheus''',
+]
