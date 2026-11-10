@@ -1,0 +1,166 @@
+# Defaults target local development (`mvnw spring-boot:run` against `docker compose up postgres redis`).
+# Every secret or environment-specific value is read from an environment variable — see /.env.example.
+spring:
+  application:
+    name: ai-interview-coach
+  threads:
+    virtual:
+      enabled: true
+  autoconfigure:
+    # Authentication is token based (Phase 2); never create Spring's default in-memory user.
+    exclude: org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/${POSTGRES_DB:aicoach}}
+    username: ${DATABASE_USERNAME:${POSTGRES_USER:aicoach}}
+    password: ${DATABASE_PASSWORD:${POSTGRES_PASSWORD:}}
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 5000
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2s
+      connect-timeout: 2s
+  jackson:
+    default-property-inclusion: non_null
+  web:
+    resources:
+      add-mappings: false # pure API: unknown paths are "no endpoint", not "no static resource"
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
+  mvc:
+    problemdetails:
+      enabled: false # GlobalExceptionHandler owns error rendering
+
+server:
+  port: ${SERVER_PORT:8080}
+  shutdown: graceful
+  # Trust X-Forwarded-* only from private-network proxies (Tomcat RemoteIpValve defaults: 10/8, 172.16/12,
+  # 192.168/16, 127/8), so request.getRemoteAddr() is the real client IP behind nginx for rate limiting.
+  forward-headers-strategy: native
+  error:
+    include-stacktrace: never
+    include-message: never
+  tomcat:
+    max-swallow-size: 2MB
+
+management:
+  server:
+    port: ${MANAGEMENT_PORT:8081} # internal only; never published outside the container network
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+      show-components: always
+      group:
+        readiness:
+          include: readinessState,db,redis,pgvector
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+logging:
+  pattern:
+    level: "%5p [%X{requestId:-}]"
+  # In containers, set LOGGING_STRUCTURED_FORMAT_CONSOLE=logstash for JSON logs (MDC included).
+
+springdoc:
+  writer-with-order-by-keys: true # deterministic output → stable generated frontend types
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+  paths-to-match: /api/**
+
+app:
+  cors:
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173}
+    max-age-seconds: 3600
+  http:
+    max-body-bytes: ${HTTP_MAX_BODY_BYTES:102400}
+  web:
+    base-url: ${WEB_BASE_URL:http://localhost:5173}
+  auth:
+    jwt:
+      secret: ${JWT_SECRET:}
+      issuer: ai-interview-coach
+      audience: ai-interview-coach-web
+      access-token-ttl: 15m
+      key-id: ${JWT_KEY_ID:k1}
+    refresh:
+      ttl: 7d
+      reuse-grace: 30s
+    cookie:
+      name: aic_rt
+      secure: ${COOKIE_SECURE:true}
+    login:
+      max-failures: 5
+      lockout: 15m
+    google:
+      client-id: ${GOOGLE_CLIENT_ID:}
+      client-secret: ${GOOGLE_CLIENT_SECRET:}
+      redirect-uri: ${GOOGLE_REDIRECT_URI:}
+      authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+      token-uri: https://oauth2.googleapis.com/token
+      jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
+  rate-limit:
+    enabled: ${RATE_LIMIT_ENABLED:true}
+    auth: { capacity: 10, period: 1m }      # register / login, per client IP
+    refresh: { capacity: 30, period: 1m }   # token refresh, per client IP
+    api: { capacity: 120, period: 1m }      # everything else, per user (or IP when anonymous)
+  ai:
+    provider: ${AI_PROVIDER:mock}              # mock | anthropic | openai (openai also covers Gemini via base-url)
+    api-key: ${AI_API_KEY:}
+    base-url: ${AI_BASE_URL:}
+    model-fast: ${AI_MODEL_FAST:claude-haiku-5-5}
+    model-smart: ${AI_MODEL_SMART:claude-sonnet-5-5}
+    timeout: 60s
+    max-retries: 2
+    retry-backoff: 500ms
+    cache-ttl: 24h
+    session-token-budget: ${AI_SESSION_TOKEN_BUDGET:80000}
+    daily-token-budget: ${AI_DAILY_TOKEN_BUDGET:400000}
+    mock-stream-delay-ms: ${AI_MOCK_STREAM_DELAY_MS:18}
+    embedding:
+      provider: ${AI_EMBEDDING_PROVIDER:mock}  # mock | openai
+      api-key: ${AI_EMBEDDING_API_KEY:}
+      base-url: ${AI_EMBEDDING_BASE_URL:}
+      model: ${AI_EMBEDDING_MODEL:text-embedding-3-small}
+  interview:
+    inactivity-timeout: 30m
+    stale-processing-after: 2m
+    free-monthly-interviews: ${FREE_MONTHLY_INTERVIEWS:3}
+  execution:
+    provider: ${CODE_EXECUTOR:mock}            # mock | judge0
+    judge0-url: ${JUDGE0_URL:http://judge0-server:2358}
+    judge0-auth-header: ${JUDGE0_AUTH_HEADER:X-Auth-Token}
+    judge0-auth-token: ${JUDGE0_AUTH_TOKEN:}
+    rapidapi-host: ${JUDGE0_RAPIDAPI_HOST:}
+    timeout: 20s
+  billing:
+    provider: ${PAYMENTS_PROVIDER:mock}        # mock | razorpay
+    razorpay-key-id: ${RAZORPAY_KEY_ID:}
+    razorpay-key-secret: ${RAZORPAY_KEY_SECRET:}
+    razorpay-webhook-secret: ${RAZORPAY_WEBHOOK_SECRET:}
+    razorpay-plan-id: ${RAZORPAY_PLAN_ID:}
+    pro-price-paise: 49900
+  seed:
+    enabled: ${SEED_DEMO_DATA:false}
+    demo-password: ${DEMO_USER_PASSWORD:}
+    admin-password: ${ADMIN_PASSWORD:}

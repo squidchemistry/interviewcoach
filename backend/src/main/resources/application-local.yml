@@ -1,0 +1,6 @@
+# Profile for running the API on the host (`mvnw spring-boot:run`, which activates it automatically).
+# Reads the same /.env file that docker compose uses, so local runs and containers share one configuration.
+# Tests never activate this profile, so a developer's .env cannot change test outcomes.
+spring:
+  config:
+    import: optional:file:../.env[.properties]

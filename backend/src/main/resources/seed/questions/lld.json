@@ -1,0 +1,449 @@
+[
+  {
+    "slug": "parking-lot",
+    "type": "LLD",
+    "title": "Design a Parking Lot",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "solid",
+      "design-patterns",
+      "concurrency"
+    ],
+    "companies": [
+      "amazon",
+      "flipkart",
+      "uber"
+    ],
+    "bodyMd": "Design the core object model for a multi-floor parking lot used by a mall. Vehicles of different sizes arrive at entry gates, receive a ticket for a suitable spot, and pay at exit gates based on how long they stayed.\n\n**Produce:** the main classes and their relationships, the key method signatures (`park`, `unpark`, fee calculation), how spot allocation is chosen, and how you prevent two gates from assigning the same spot.",
+    "lld": {
+      "requirements": [
+        "Support multiple floors, each with spots of types SMALL (bike), COMPACT (car) and LARGE (truck/bus).",
+        "A vehicle may only park in a spot of its size or larger, per a configurable compatibility rule.",
+        "Issue a ticket on entry recording vehicle, spot, gate and entry time.",
+        "Compute the fee at exit using a pricing strategy (hourly by spot type, with a first-hour flat rate).",
+        "Support several entry and exit gates operating concurrently without double-allocating a spot.",
+        "Show real-time free-spot counts per floor and spot type for display boards.",
+        "Allow new vehicle types, spot types and pricing rules without modifying existing classes.",
+        "Reject entry cleanly when the lot is full for that vehicle type."
+      ],
+      "focusAreas": [
+        "SOLID",
+        "DESIGN_PATTERNS",
+        "CONCURRENCY",
+        "EXTENSIBILITY"
+      ],
+      "referenceDesignMd": "### Core classes\n- **ParkingLot** — aggregate root and facade. Owns floors, gates and the `SpotAllocator`. Exposes `park(vehicle, gate)` and `unpark(ticketId, gate)`.\n- **Floor** — holds `ParkingSpot`s grouped by `SpotType`, plus per-type free counters for display boards.\n- **ParkingSpot** — id, type, floor, and an occupancy flag claimed atomically (`tryOccupy()` / `release()`).\n- **Vehicle** (abstract) with `Bike`, `Car`, `Truck`; each reports its `VehicleSize`.\n- **Ticket** — immutable record of vehicle, spot, entry gate and entry time; **Receipt** adds exit time and amount.\n- **EntryGate / ExitGate** — thin clients that call the lot; they hold no allocation logic.\n\n### Patterns and why\n- **Strategy** for `SpotAllocationStrategy` (nearest-to-gate, lowest-floor-first, even-spread) and `PricingStrategy` (hourly, flat weekend, EV-charging surcharge). New rules are new classes — Open/Closed.\n- **Factory** to create `Vehicle` instances from a licence-plate scan + type, keeping gates ignorant of concrete classes.\n- **Observer**: floors publish `SpotFreed` / `SpotTaken` events; `DisplayBoard` subscribes, so counting logic is not baked into allocation.\n- **Singleton is avoided**; the lot is injected so it can be tested and multiple lots can exist.\n\n### Concurrency\nAllocation is the race: two gates can pick the same free spot. Each `SpotType` keeps a concurrent queue (or set) of free spot ids per floor. `allocate` polls a candidate and then confirms with `spot.tryOccupy()` (a compare-and-set on an `AtomicBoolean`). If the CAS fails, it retries with the next candidate. This avoids a global lock and keeps gates independent. `release` flips the flag and re-offers the spot to the queue. Ticket ids come from an atomic sequence or UUID. If state is persisted, the same guarantee comes from a conditional update (`UPDATE spot SET occupied = true WHERE id = ? AND occupied = false`).\n\n### Extension points\n- New vehicle/spot types: add enum values and update the compatibility table (data, not code).\n- Payment methods via a `PaymentProcessor` interface (cash, card, UPI).\n- Reservations: a `Reservation` holds a spot in a RESERVED state with expiry.\n- Multiple lots: `ParkingLot` instances keyed by id behind a service.",
+      "referenceMermaid": "classDiagram\n  class ParkingLot {\n    -List~Floor~ floors\n    -SpotAllocationStrategy allocator\n    -PricingStrategy pricing\n    +park(Vehicle v, EntryGate g) Ticket\n    +unpark(String ticketId, ExitGate g) Receipt\n  }\n  class Floor {\n    -int number\n    -Map spotsByType\n    +freeCount(SpotType t) int\n  }\n  class ParkingSpot {\n    -String id\n    -SpotType type\n    -AtomicBoolean occupied\n    +tryOccupy() boolean\n    +release() void\n  }\n  class Vehicle {\n    <<abstract>>\n    -String plate\n    +size() VehicleSize\n  }\n  class Car\n  class Bike\n  class Truck\n  class Ticket {\n    -String id\n    -Vehicle vehicle\n    -ParkingSpot spot\n    -Instant entryTime\n  }\n  class SpotAllocationStrategy {\n    <<interface>>\n    +allocate(Vehicle v, List~Floor~ floors) ParkingSpot\n  }\n  class PricingStrategy {\n    <<interface>>\n    +price(Ticket t, Instant exit) Money\n  }\n  class DisplayBoard {\n    +onSpotChanged(SpotEvent e) void\n  }\n  ParkingLot \"1\" *-- \"many\" Floor\n  Floor \"1\" *-- \"many\" ParkingSpot\n  ParkingLot --> SpotAllocationStrategy\n  ParkingLot --> PricingStrategy\n  Vehicle <|-- Car\n  Vehicle <|-- Bike\n  Vehicle <|-- Truck\n  Ticket --> Vehicle\n  Ticket --> ParkingSpot\n  Floor --> DisplayBoard",
+      "expectedPoints": [
+        "Clear separation between lot/floor/spot, vehicle hierarchy, ticket and gates.",
+        "Strategy pattern for allocation and pricing so rules change without touching core classes.",
+        "Atomic spot claim (CAS or conditional DB update) to stop two gates allocating the same spot.",
+        "Free-spot counts via events/observers rather than scanning all spots.",
+        "Handles full lot, lost ticket and overstay edge cases.",
+        "Explains how a new vehicle type or payment method would be added."
+      ]
+    }
+  },
+  {
+    "slug": "elevator-system",
+    "type": "LLD",
+    "title": "Design an Elevator Control System",
+    "difficulty": "HARD",
+    "tags": [
+      "state-machine",
+      "concurrency",
+      "design-patterns"
+    ],
+    "companies": [
+      "microsoft",
+      "google",
+      "oracle"
+    ],
+    "bodyMd": "Design the control software for a bank of elevators in a 40-floor office building. Passengers press up/down buttons on floors (hall calls) and destination buttons inside cars (car calls). A central controller decides which car serves each hall call.\n\n**Produce:** classes for the controller, cars, requests and scheduling; the state model of a car; how requests flow from buttons to cars; and how you keep shared state consistent while cars move independently.",
+    "lld": {
+      "requirements": [
+        "Support N cars serving M floors, configurable at start-up.",
+        "Accept hall calls (floor + direction) and car calls (destination floor from inside a car).",
+        "Assign each hall call to exactly one car using a pluggable dispatch strategy.",
+        "Each car serves requests in its current direction before reversing (SCAN/LOOK behaviour).",
+        "Model car states: IDLE, MOVING_UP, MOVING_DOWN, DOORS_OPEN, MAINTENANCE.",
+        "A car in MAINTENANCE accepts no new requests; its pending hall calls are reassigned.",
+        "Respect capacity: a full car skips hall calls but still serves car calls.",
+        "Expose status (floor, direction, state) for lobby displays."
+      ],
+      "focusAreas": [
+        "SOLID",
+        "DESIGN_PATTERNS",
+        "CONCURRENCY",
+        "EXTENSIBILITY"
+      ],
+      "referenceDesignMd": "### Core classes\n- **ElevatorController** — receives hall calls, asks the `DispatchStrategy` for the best car, and hands the request to that car. It owns the list of `ElevatorCar`s and is the only writer of assignments.\n- **ElevatorCar** — id, current floor, direction, load, `CarState`, and two sorted sets of stops: `upStops` and `downStops`. Runs its own loop: decide next stop, move one floor, open doors, repeat.\n- **Request** — `HallCall(floor, direction)` and `CarCall(floor)` subtypes.\n- **DispatchStrategy** (interface) — `NearestCarStrategy`, `LeastLoadedStrategy`, `ZoneStrategy` (cars 1–2 serve floors 1–20).\n- **Door**, **Motor** — hardware adapters behind interfaces so a simulator can replace them in tests.\n- **Display** — subscribes to car status events.\n\n### Patterns and why\n- **State** pattern for car behaviour: each `CarState` (`Idle`, `MovingUp`, `MovingDown`, `DoorsOpen`, `Maintenance`) decides how to react to `onTick`, `onArrive`, `addStop`. Illegal transitions (moving with doors open) are impossible by construction.\n- **Strategy** for dispatching, swappable at runtime (e.g. \"up-peak\" mode in the morning).\n- **Observer** for displays and monitoring.\n- **Command** objects for requests so they can be queued, logged and reassigned.\n\n### Scheduling\nWithin a car, the LOOK algorithm: continue in the current direction while stops remain ahead (`upStops.ceiling(floor)` / `downStops.floor(floor)`), then reverse. The dispatcher scores cars by distance, direction compatibility (\"already moving toward the floor in the same direction\" is cheapest) and load.\n\n### Concurrency\nEach car runs on its own thread (or a scheduled executor tick). The controller and the car thread both touch the stop sets, so each car guards them with its own lock or uses `ConcurrentSkipListSet`; there is no global lock across cars. Hall-call assignment is single-writer through the controller's queue, so a call is never assigned twice. On maintenance, the car atomically drains its unserved hall calls and the controller re-dispatches them.\n\n### Extension points\nVIP/fire-service mode as new states, destination-dispatch kiosks as a new request type, energy-saving strategies, and a persistence layer for audit logs.",
+      "referenceMermaid": "classDiagram\n  class ElevatorController {\n    -List~ElevatorCar~ cars\n    -DispatchStrategy strategy\n    +submitHallCall(int floor, Direction d) void\n    +submitCarCall(int carId, int floor) void\n    +setStrategy(DispatchStrategy s) void\n  }\n  class ElevatorCar {\n    -int id\n    -int currentFloor\n    -Direction direction\n    -CarState state\n    -SortedSet upStops\n    -SortedSet downStops\n    +addStop(Request r) boolean\n    +tick() void\n    +status() CarStatus\n  }\n  class CarState {\n    <<interface>>\n    +onTick(ElevatorCar c) void\n    +canAccept(Request r) boolean\n  }\n  class IdleState\n  class MovingState\n  class DoorsOpenState\n  class MaintenanceState\n  class Request {\n    <<abstract>>\n    -int floor\n    -Instant createdAt\n  }\n  class HallCall {\n    -Direction direction\n  }\n  class CarCall\n  class DispatchStrategy {\n    <<interface>>\n    +choose(HallCall c, List~ElevatorCar~ cars) ElevatorCar\n  }\n  class NearestCarStrategy\n  class ZoneStrategy\n  ElevatorController \"1\" *-- \"many\" ElevatorCar\n  ElevatorController --> DispatchStrategy\n  ElevatorCar --> CarState\n  CarState <|.. IdleState\n  CarState <|.. MovingState\n  CarState <|.. DoorsOpenState\n  CarState <|.. MaintenanceState\n  Request <|-- HallCall\n  Request <|-- CarCall\n  DispatchStrategy <|.. NearestCarStrategy\n  DispatchStrategy <|.. ZoneStrategy",
+      "expectedPoints": [
+        "Separates dispatch (which car) from per-car scheduling (which stop next).",
+        "Models car lifecycle as an explicit state machine with legal transitions only.",
+        "Uses LOOK/SCAN ordering with direction-aware stop sets.",
+        "Per-car locking or single-writer queues; no global lock; no double assignment of a hall call.",
+        "Handles maintenance/capacity by reassigning hall calls.",
+        "Pluggable dispatch strategies and hardware abstractions for testability."
+      ]
+    }
+  },
+  {
+    "slug": "lru-cache-with-ttl",
+    "type": "LLD",
+    "title": "Design an In-Memory LRU Cache With TTL",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "data-structures",
+      "concurrency",
+      "extensibility"
+    ],
+    "companies": [
+      "amazon",
+      "microsoft",
+      "phonepe"
+    ],
+    "bodyMd": "Design a reusable in-memory key-value cache library used by several services. It has a fixed capacity, evicts the least recently used entry when full, and supports a per-entry time-to-live.\n\n**Produce:** the public API, the internal data structures with their complexities, how expiry and eviction interact, how you make it thread-safe, and how a different eviction policy (e.g. LFU) could be plugged in.",
+    "lld": {
+      "requirements": [
+        "`get(key)` returns the value or empty, and marks the entry as most recently used.",
+        "`put(key, value, ttl)` inserts or updates; a missing ttl means the default ttl (or no expiry).",
+        "`get` and `put` run in O(1) average time.",
+        "When capacity is exceeded, evict according to the configured policy (LRU by default).",
+        "Expired entries are never returned, even if not yet physically removed.",
+        "Safe for concurrent use by many threads.",
+        "Expose metrics: hits, misses, evictions, expirations.",
+        "Allow an eviction listener callback (e.g. to write back or log)."
+      ],
+      "focusAreas": [
+        "SOLID",
+        "DESIGN_PATTERNS",
+        "CONCURRENCY",
+        "EXTENSIBILITY",
+        "API_DESIGN"
+      ],
+      "referenceDesignMd": "### Public API\n`Cache<K, V>` interface: `Optional<V> get(K)`, `void put(K, V)`, `void put(K, V, Duration ttl)`, `void invalidate(K)`, `CacheStats stats()`. Built with a `CacheBuilder` (capacity, default TTL, policy, clock, listener) — **Builder** keeps construction readable and validated.\n\n### Data structures\n- `HashMap<K, Node>` for O(1) lookup.\n- A **doubly linked list** of nodes in recency order (head = most recent). Moving a node to the head and unlinking the tail are O(1).\n- Each `Node` stores key, value and `expiresAt` (epoch millis from an injected `Clock`, so tests can control time).\n\n### Expiry\n- **Lazy**: `get` checks `expiresAt`; an expired node is removed and counted as a miss + expiration.\n- **Active**: a background sweeper (scheduled executor) samples or walks entries periodically so dead entries do not hold memory. A min-heap/timer wheel keyed by `expiresAt` makes the sweep O(log n) per removal if exact timing matters.\n- On `put` when full, first drop expired entries encountered at the tail before evicting a live one.\n\n### Eviction policy\n`EvictionPolicy<K>` (**Strategy**) with hooks `onAccess(node)`, `onInsert(node)`, `victim()`. `LruPolicy` uses the linked list; `LfuPolicy` uses frequency buckets (map of freq -> linked list + minFreq) to stay O(1); `FifoPolicy` ignores access. The cache core never knows which policy it runs.\n\n### Concurrency\nLRU mutates shared structure on every read, so a plain read-write lock does not help much. Options:\n1. A single `ReentrantLock` around get/put — simple, correct, fine up to moderate contention.\n2. **Lock striping / segmentation**: N independent segments chosen by `hash(key) % N`, each its own LRU with capacity/N. Approximate global LRU but scales nearly linearly.\n3. Read buffering (as in Caffeine): record accesses in a lock-free ring buffer and apply them in batches under the lock.\nMetrics use `LongAdder`. Listener callbacks run outside the lock to avoid deadlocks and slow user code blocking the cache.\n\n### Extension points\nPluggable policies, `Loader` for read-through, `Writer` for write-through, size-based weighing (`Weigher`) instead of entry count, and a decorator that adds metrics/logging.",
+      "referenceMermaid": "classDiagram\n  class Cache {\n    <<interface>>\n    +get(K key) Optional\n    +put(K key, V value, Duration ttl) void\n    +invalidate(K key) void\n    +stats() CacheStats\n  }\n  class InMemoryCache {\n    -int capacity\n    -Map index\n    -EvictionPolicy policy\n    -Clock clock\n    -ReentrantLock lock\n  }\n  class Node {\n    -K key\n    -V value\n    -long expiresAt\n    -Node prev\n    -Node next\n  }\n  class EvictionPolicy {\n    <<interface>>\n    +onAccess(Node n) void\n    +onInsert(Node n) void\n    +victim() Node\n    +remove(Node n) void\n  }\n  class LruPolicy\n  class LfuPolicy\n  class ExpirySweeper {\n    +sweep() int\n  }\n  class CacheBuilder {\n    +capacity(int c) CacheBuilder\n    +defaultTtl(Duration d) CacheBuilder\n    +policy(EvictionPolicy p) CacheBuilder\n    +build() Cache\n  }\n  class EvictionListener {\n    <<interface>>\n    +onEvict(K key, V value, Cause c) void\n  }\n  Cache <|.. InMemoryCache\n  InMemoryCache \"1\" *-- \"many\" Node\n  InMemoryCache --> EvictionPolicy\n  EvictionPolicy <|.. LruPolicy\n  EvictionPolicy <|.. LfuPolicy\n  InMemoryCache --> ExpirySweeper\n  InMemoryCache --> EvictionListener\n  CacheBuilder ..> InMemoryCache",
+      "expectedPoints": [
+        "HashMap + doubly linked list for O(1) get/put and recency updates.",
+        "Lazy expiry on read plus an active sweeper; injectable clock for testing.",
+        "Eviction policy as a Strategy; can describe O(1) LFU with frequency buckets.",
+        "Concrete thread-safety plan (single lock vs segments) with trade-offs.",
+        "Listener callbacks invoked outside the lock; metrics via atomic counters.",
+        "Clean builder-based API with validation."
+      ]
+    }
+  },
+  {
+    "slug": "api-rate-limiter",
+    "type": "LLD",
+    "title": "Design a Pluggable API Rate Limiter",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "concurrency",
+      "design-patterns",
+      "extensibility"
+    ],
+    "companies": [
+      "razorpay",
+      "atlassian",
+      "uber"
+    ],
+    "bodyMd": "Design a rate-limiting component that an API gateway calls before forwarding each request. Limits differ per client tier and per endpoint, and the product team wants to experiment with different algorithms.\n\n**Produce:** the interfaces and classes, at least two algorithms behind a common abstraction, how rules are resolved for a request, how the limiter behaves under concurrent requests from the same client, and how it would extend to multiple gateway instances.",
+    "lld": {
+      "requirements": [
+        "`allow(request)` returns a decision (allowed / rejected) plus remaining quota and retry-after.",
+        "Limits are keyed by client id and endpoint, e.g. FREE tier: 100 req/min on /search.",
+        "Support token bucket and sliding-window-log (or sliding-window-counter) algorithms.",
+        "Rules are loaded from configuration and can be reloaded without restart.",
+        "Decisions add under 1 ms of latency in the single-node case.",
+        "Correct under concurrent requests for the same key (no over-admission).",
+        "Idle keys must not leak memory indefinitely.",
+        "Design should extend to a distributed limiter shared by several gateway nodes."
+      ],
+      "focusAreas": [
+        "SOLID",
+        "DESIGN_PATTERNS",
+        "CONCURRENCY",
+        "EXTENSIBILITY",
+        "API_DESIGN"
+      ],
+      "referenceDesignMd": "### Core classes\n- **RateLimiter** (facade) — `Decision allow(RequestContext ctx)`. Resolves the rule, derives the key, delegates to the algorithm.\n- **RuleResolver** — matches `(tier, endpoint)` to a `RateLimitRule` (limit, window, algorithm type). Most specific rule wins; a default rule applies otherwise. Backed by a `RuleSource` (file, DB, config service) and swapped atomically on reload (`AtomicReference<RuleSet>`).\n- **KeyResolver** — builds the bucket key, e.g. `clientId:endpoint`; can be replaced to limit by IP or API key.\n- **RateLimitAlgorithm** (interface) — `Decision tryAcquire(String key, RateLimitRule rule, long nowMillis)`.\n  - **TokenBucketAlgorithm** — per-key `{tokens, lastRefill}`; refill lazily on each call: `tokens = min(cap, tokens + elapsed * rate)`. Allows bursts up to capacity.\n  - **SlidingWindowCounterAlgorithm** — current and previous fixed-window counts; estimate = `prev * overlap + curr`. O(1) memory, smooths the fixed-window boundary spike.\n  - **SlidingWindowLogAlgorithm** — deque of timestamps; exact but O(limit) memory per key.\n- **Decision** — `allowed`, `remaining`, `retryAfter`, used to set `X-RateLimit-*` and `Retry-After` headers.\n\n### Patterns\n**Strategy** for algorithms, **Factory** (`AlgorithmFactory`) to map rule types to instances, **Chain of Responsibility** to evaluate several limits in order (per-second burst, then per-day quota), and **Decorator** for metrics.\n\n### Concurrency\nState lives in a `ConcurrentHashMap<String, BucketState>`. Updates for one key must be atomic: use `compute(key, ...)` so the read-refill-decrement runs under the map's per-bin lock, or make `BucketState` immutable and loop on `AtomicReference.compareAndSet`. Different keys never contend. A clock is injected so tests are deterministic. Idle entries are removed by a scheduled cleaner or by using a cache with expire-after-access.\n\n### Distributed extension\nMove state behind a `BucketStore` interface. A Redis implementation runs the token-bucket update in a Lua script so read-modify-write is atomic on the server, with key TTLs for cleanup. If the store is unavailable, a configurable fail-open/fail-closed policy decides, with a local limiter as fallback.",
+      "referenceMermaid": "classDiagram\n  class RateLimiter {\n    -RuleResolver rules\n    -KeyResolver keys\n    -AlgorithmFactory factory\n    +allow(RequestContext ctx) Decision\n  }\n  class RuleResolver {\n    -AtomicReference ruleSet\n    +resolve(RequestContext ctx) RateLimitRule\n    +reload() void\n  }\n  class RateLimitRule {\n    -int limit\n    -Duration window\n    -AlgorithmType type\n  }\n  class RateLimitAlgorithm {\n    <<interface>>\n    +tryAcquire(String key, RateLimitRule r, long now) Decision\n  }\n  class TokenBucketAlgorithm\n  class SlidingWindowCounterAlgorithm\n  class BucketStore {\n    <<interface>>\n    +compute(String key, Function f) BucketState\n  }\n  class InMemoryBucketStore\n  class RedisBucketStore\n  class Decision {\n    -boolean allowed\n    -long remaining\n    -Duration retryAfter\n  }\n  class AlgorithmFactory {\n    +forType(AlgorithmType t) RateLimitAlgorithm\n  }\n  RateLimiter --> RuleResolver\n  RateLimiter --> AlgorithmFactory\n  AlgorithmFactory ..> RateLimitAlgorithm\n  RateLimitAlgorithm <|.. TokenBucketAlgorithm\n  RateLimitAlgorithm <|.. SlidingWindowCounterAlgorithm\n  TokenBucketAlgorithm --> BucketStore\n  SlidingWindowCounterAlgorithm --> BucketStore\n  BucketStore <|.. InMemoryBucketStore\n  BucketStore <|.. RedisBucketStore\n  RateLimiter ..> Decision",
+      "expectedPoints": [
+        "Algorithms behind a common interface; can compare token bucket vs sliding window trade-offs.",
+        "Rule resolution by tier/endpoint with hot reload via atomic swap.",
+        "Atomic per-key updates (compute / CAS) without a global lock.",
+        "Injectable clock and idle-key cleanup.",
+        "Clear response contract (remaining, retry-after headers).",
+        "Distributed path: shared store with atomic scripts and a fail-open/closed decision."
+      ]
+    }
+  },
+  {
+    "slug": "expense-sharing-app",
+    "type": "LLD",
+    "title": "Design an Expense-Sharing Ledger",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "solid",
+      "design-patterns",
+      "extensibility"
+    ],
+    "companies": [
+      "flipkart",
+      "phonepe",
+      "razorpay"
+    ],
+    "bodyMd": "Design the core of a group expense-sharing app. Friends create groups, record expenses paid by one person and split among several, and see who owes whom. Users also want a \"settle up\" view that minimises the number of payments.\n\n**Produce:** domain classes, how different split types are modelled and validated, how balances are stored and updated, the settle-up approach, and how money is represented.",
+    "lld": {
+      "requirements": [
+        "Users can create groups and add members.",
+        "Record an expense with payer, total amount, participants and split type: EQUAL, EXACT amounts or PERCENT.",
+        "Validate splits: exact amounts must sum to the total; percentages must sum to 100.",
+        "Show each user's net balance in a group and pairwise balances (A owes B ₹X).",
+        "Record settlements (payments between two users) that reduce balances.",
+        "Suggest a simplified set of transfers that settles the group.",
+        "Keep an immutable history of expenses and settlements; allow editing by reversal + re-entry.",
+        "Handle currency rounding without losing or creating money."
+      ],
+      "focusAreas": [
+        "SOLID",
+        "DESIGN_PATTERNS",
+        "EXTENSIBILITY",
+        "PERSISTENCE"
+      ],
+      "referenceDesignMd": "### Domain\n- **User**, **Group** (members, ledger).\n- **Expense** — id, payer, `Money total`, description, createdAt, and a list of **Split** (user, `Money share`). Immutable once recorded.\n- **Settlement** — from, to, amount.\n- **Money** — value object storing amount in minor units (`long paise`) plus currency; never `double`.\n- **BalanceSheet** — per group, `Map<UserId, Long>` net balances (positive = is owed). Pairwise view derived from expense history, or stored as `Map<Pair, Long>` if it must be fast.\n\n### Split types (Strategy + Factory)\n`SplitStrategy` has `List<Split> compute(Money total, List<SplitInput> inputs)` and `validate(...)`.\n- `EqualSplit`: `total / n` with the remainder (in paise) given one unit each to the first `r` participants in a deterministic order, so shares always sum to the total.\n- `ExactSplit`: validates the sum equals the total.\n- `PercentSplit`: converts percentages to paise, then applies the same remainder distribution.\nA `SplitStrategyFactory` maps `SplitType` to a strategy. Adding \"shares\" (2:1:1) is a new class — Open/Closed.\n\n### Updating balances\n`ExpenseService.addExpense` validates, persists the expense, then applies deltas: payer `+total`, each participant `-share`. Expenses are the source of truth (**event-sourced ledger**); balances are a projection that can be rebuilt. Edits are a reversal entry plus a new expense, preserving the audit trail. Writes for one group are serialised (optimistic version on the group's balance row, or a per-group lock) so concurrent additions do not lose updates.\n\n### Settle up\nCompute net balances, put creditors and debtors in two max-heaps, and repeatedly match the largest debtor with the largest creditor, transferring `min(debt, credit)`. This yields at most n-1 transfers. (Finding the true minimum is NP-hard; the greedy is the standard practical answer — say so.)\n\n### Extension points\nMulti-currency (store original currency + FX rate at time of expense), recurring expenses, notifications via an Observer on `ExpenseAdded`, and a repository interface for persistence.",
+      "referenceMermaid": "classDiagram\n  class User {\n    -String id\n    -String name\n  }\n  class Group {\n    -String id\n    -List~User~ members\n  }\n  class Expense {\n    -String id\n    -User payer\n    -Money total\n    -List~Split~ splits\n    -Instant createdAt\n  }\n  class Split {\n    -User user\n    -Money share\n  }\n  class Money {\n    -long minorUnits\n    -String currency\n    +plus(Money m) Money\n    +minus(Money m) Money\n  }\n  class SplitStrategy {\n    <<interface>>\n    +compute(Money total, List~SplitInput~ in) List~Split~\n    +validate(Money total, List~SplitInput~ in) void\n  }\n  class EqualSplit\n  class ExactSplit\n  class PercentSplit\n  class ExpenseService {\n    +addExpense(ExpenseRequest r) Expense\n    +settle(String groupId, User from, User to, Money m) Settlement\n    +simplify(String groupId) List~Transfer~\n  }\n  class BalanceSheet {\n    -Map netBalances\n    +apply(Expense e) void\n    +apply(Settlement s) void\n  }\n  class Settlement {\n    -User from\n    -User to\n    -Money amount\n  }\n  Group \"1\" o-- \"many\" User\n  Group \"1\" *-- \"1\" BalanceSheet\n  Group \"1\" *-- \"many\" Expense\n  Expense \"1\" *-- \"many\" Split\n  Expense --> Money\n  SplitStrategy <|.. EqualSplit\n  SplitStrategy <|.. ExactSplit\n  SplitStrategy <|.. PercentSplit\n  ExpenseService --> SplitStrategy\n  ExpenseService --> BalanceSheet\n  BalanceSheet ..> Settlement",
+      "expectedPoints": [
+        "Money as integer minor units with deterministic remainder distribution.",
+        "Split types as strategies with validation; easy to add new types.",
+        "Expenses as immutable source of truth; balances as a rebuildable projection.",
+        "Greedy heap-based settle-up and acknowledgement that the exact minimum is NP-hard.",
+        "Concurrency control for simultaneous updates to one group.",
+        "Edits via reversal entries for auditability."
+      ]
+    }
+  },
+  {
+    "slug": "movie-ticket-booking",
+    "type": "LLD",
+    "title": "Design a Movie Ticket Booking System",
+    "difficulty": "HARD",
+    "tags": [
+      "concurrency",
+      "state-machine",
+      "design-patterns"
+    ],
+    "companies": [
+      "amazon",
+      "zomato",
+      "swiggy"
+    ],
+    "bodyMd": "Design the booking core of a movie ticketing platform. Users browse shows, pick specific seats on a seat map, hold them while paying, and receive a confirmed booking. Popular shows see thousands of users competing for the same seats.\n\n**Produce:** the domain model (theatre, screen, show, seat, booking), the seat-hold and booking state machine, how you guarantee no seat is sold twice, and how holds expire when payment is abandoned.",
+    "lld": {
+      "requirements": [
+        "Model cities, theatres, screens, seat layouts (with seat categories and prices) and shows.",
+        "Users can view real-time seat availability for a show.",
+        "Selecting seats places a temporary hold (e.g. 8 minutes) visible to other users as unavailable.",
+        "A seat can be confirmed for at most one booking — no double selling under concurrency.",
+        "Expired holds are released automatically; late payments for expired holds are refunded.",
+        "Booking lifecycle: PENDING_PAYMENT -> CONFIRMED, or -> EXPIRED / CANCELLED.",
+        "Support cancellation with a configurable refund policy.",
+        "Pricing can vary by seat category, show time and promotions."
+      ],
+      "focusAreas": [
+        "CONCURRENCY",
+        "DESIGN_PATTERNS",
+        "PERSISTENCE",
+        "EXTENSIBILITY",
+        "SOLID"
+      ],
+      "referenceDesignMd": "### Domain\n- **Theatre** -> **Screen** -> **SeatLayout** (static seats with row, number, `SeatCategory`).\n- **Movie**, **Show** (movie, screen, start time, `PricingPolicy`).\n- **ShowSeat** — the per-show inventory row: `(showId, seatId, status, holdId, holdExpiresAt, version)`. Status ∈ AVAILABLE, HELD, BOOKED. This is the contended entity.\n- **SeatHold** — holdId, user, seats, expiry.\n- **Booking** — id, user, show, seats, amount, `BookingStatus`, payment reference.\n\n### State machine\nShowSeat: AVAILABLE -> HELD (hold) -> BOOKED (payment success) ; HELD -> AVAILABLE (expiry/cancel). Booking: PENDING_PAYMENT -> CONFIRMED | EXPIRED | FAILED; CONFIRMED -> CANCELLED. Transitions are enforced in one place (**State** pattern or a transition table), so an EXPIRED booking can never become CONFIRMED.\n\n### No double selling\nThe hold is the critical section. `HoldService.hold(showId, seatIds, user)` performs one atomic conditional update:\n`UPDATE show_seat SET status='HELD', hold_id=?, hold_expires_at=? WHERE show_id=? AND seat_id IN (...) AND (status='AVAILABLE' OR (status='HELD' AND hold_expires_at < now()))`\nand succeeds only if the affected row count equals the number of seats requested; otherwise the transaction rolls back (all-or-nothing). This is optimistic, row-level, and needs no application lock. Confirmation does `SET status='BOOKED' WHERE hold_id=? AND status='HELD'` inside the same transaction that marks the booking CONFIRMED. A Redis `SET NX PX` per seat is an alternative fast path, but the database row stays the source of truth.\n\n### Expiry\nHolds expire logically by timestamp (the conditional update already treats stale holds as free), and a scheduled job or delayed queue cleans them up and moves bookings to EXPIRED. If a payment callback arrives after expiry and the confirm update affects zero rows, the payment is refunded — idempotently, keyed by payment id.\n\n### Patterns\n**Strategy** for pricing and refund policies, **Observer** to push seat-map changes to clients (WebSocket) and send notifications, **Facade** `BookingService` coordinating hold, payment and confirmation.\n\n### Extension points\nFood add-ons, coupons (decorators on price), group bookings, waitlists for sold-out shows.",
+      "referenceMermaid": "classDiagram\n  class Theatre {\n    -String id\n    -String city\n  }\n  class Screen {\n    -String id\n    -SeatLayout layout\n  }\n  class Seat {\n    -String id\n    -String row\n    -int number\n    -SeatCategory category\n  }\n  class Show {\n    -String id\n    -Movie movie\n    -Instant startTime\n    -PricingPolicy pricing\n  }\n  class ShowSeat {\n    -SeatStatus status\n    -String holdId\n    -Instant holdExpiresAt\n    -long version\n  }\n  class Booking {\n    -String id\n    -BookingStatus status\n    -Money amount\n    +confirm(String paymentRef) void\n    +expire() void\n    +cancel() void\n  }\n  class HoldService {\n    +hold(String showId, List~String~ seatIds, String userId) SeatHold\n    +release(String holdId) void\n  }\n  class BookingService {\n    +startBooking(SeatHold h) Booking\n    +onPaymentResult(PaymentEvent e) void\n  }\n  class PricingPolicy {\n    <<interface>>\n    +price(Show s, Seat seat) Money\n  }\n  class HoldExpiryJob {\n    +run() void\n  }\n  Theatre \"1\" *-- \"many\" Screen\n  Screen \"1\" *-- \"many\" Seat\n  Show --> Screen\n  Show \"1\" *-- \"many\" ShowSeat\n  ShowSeat --> Seat\n  Booking \"1\" --> \"many\" ShowSeat\n  BookingService --> HoldService\n  BookingService --> Booking\n  Show --> PricingPolicy\n  HoldExpiryJob --> HoldService",
+      "expectedPoints": [
+        "Separates static seat layout from per-show seat inventory.",
+        "Atomic, all-or-nothing hold via conditional update (or equivalent) — no double selling.",
+        "Explicit seat and booking state machines with enforced transitions.",
+        "Hold expiry by timestamp plus cleanup job; handles late payments with idempotent refunds.",
+        "Pricing/refund policies as strategies.",
+        "Discusses scale: hot shows, real-time seat map updates, cache vs source of truth."
+      ]
+    }
+  },
+  {
+    "slug": "vending-machine",
+    "type": "LLD",
+    "title": "Design a Vending Machine",
+    "difficulty": "EASY",
+    "tags": [
+      "state-machine",
+      "design-patterns",
+      "solid"
+    ],
+    "companies": [
+      "adobe",
+      "salesforce"
+    ],
+    "bodyMd": "Design the software for a snack vending machine. Customers select a product, insert coins or notes, and receive the product and change. An operator restocks products and collects cash.\n\n**Produce:** the classes, the machine's states and the transitions between them, how change is computed, and how the design handles invalid actions (e.g. selecting a product while a transaction is in progress).",
+    "lld": {
+      "requirements": [
+        "The machine holds products in slots (code, product, price, quantity).",
+        "Accept coins/notes of fixed denominations and track the inserted amount.",
+        "Dispense the product once enough money is inserted and return correct change.",
+        "Refuse the sale and refund if exact change cannot be made.",
+        "Allow the customer to cancel and get a full refund before dispensing.",
+        "Reject selection of an out-of-stock or unknown slot with a clear message.",
+        "Operator mode: restock slots, set prices, collect cash; unavailable during a sale."
+      ],
+      "focusAreas": [
+        "SOLID",
+        "DESIGN_PATTERNS",
+        "EXTENSIBILITY"
+      ],
+      "referenceDesignMd": "### Core classes\n- **VendingMachine** — context object. Holds `Inventory`, `CashBox`, the current `MachineState`, the selected slot and the inserted amount. Public methods delegate to the state: `selectProduct(code)`, `insert(Denomination)`, `cancel()`, plus operator methods.\n- **Inventory** — `Map<String, Slot>`; `Slot` has product, price (in minor units) and count.\n- **CashBox** — counts per `Denomination`; `Optional<Map<Denomination, Integer>> makeChange(amount)`.\n- **Denomination** — enum with value in minor units.\n\n### State pattern\nStates: `IdleState`, `ProductSelectedState`, `PaymentState` (collecting money), `DispensingState`, `MaintenanceState`. Each implements the full `MachineState` interface; actions that are illegal in that state return an error (e.g. `IdleState.insert` can either reject or accept \"money first\", depending on the chosen flow). This replaces a growing `switch` on a status enum and makes each state's rules testable on their own.\n\nTransitions: Idle --select--> ProductSelected --insert--> Payment --(amount >= price)--> Dispensing --done--> Idle. `cancel` from ProductSelected or Payment refunds and returns to Idle. Operator `enterMaintenance` is allowed only from Idle.\n\n### Change making\nFor canonical denominations (1, 2, 5, 10, ...) greedy (largest first, limited by counts in the box) works. Because the box has finite counts, greedy can fail where a solution exists; a small bounded DP over denominations is the robust choice and is cheap at these sizes. The change is computed **before** dispensing: if it is impossible, refund and stay consistent. Inserted money is added to the cash box only when the sale commits.\n\n### SOLID\nPayment acceptance is behind a `PaymentAcceptor` interface (coins, notes, card/UPI later). The display and the hardware dispenser are interfaces, so the logic runs against fakes in tests.\n\n### Extension points\nCard/UPI payments, dynamic pricing, telemetry events for low stock (Observer), and multiple items per transaction.",
+      "referenceMermaid": "classDiagram\n  class VendingMachine {\n    -MachineState state\n    -Inventory inventory\n    -CashBox cashBox\n    -String selectedCode\n    -long insertedAmount\n    +selectProduct(String code) void\n    +insert(Denomination d) void\n    +cancel() void\n    +setState(MachineState s) void\n  }\n  class MachineState {\n    <<interface>>\n    +selectProduct(VendingMachine m, String code) void\n    +insert(VendingMachine m, Denomination d) void\n    +cancel(VendingMachine m) void\n  }\n  class IdleState\n  class ProductSelectedState\n  class PaymentState\n  class DispensingState\n  class MaintenanceState\n  class Inventory {\n    -Map slots\n    +slot(String code) Slot\n  }\n  class Slot {\n    -Product product\n    -long price\n    -int count\n  }\n  class CashBox {\n    -Map counts\n    +makeChange(long amount) Optional\n    +deposit(Denomination d) void\n  }\n  class Denomination {\n    <<enumeration>>\n    COIN_1\n    COIN_2\n    COIN_5\n    COIN_10\n    NOTE_20\n    NOTE_50\n  }\n  VendingMachine --> MachineState\n  MachineState <|.. IdleState\n  MachineState <|.. ProductSelectedState\n  MachineState <|.. PaymentState\n  MachineState <|.. DispensingState\n  MachineState <|.. MaintenanceState\n  VendingMachine *-- Inventory\n  VendingMachine *-- CashBox\n  Inventory \"1\" *-- \"many\" Slot\n  CashBox --> Denomination",
+      "expectedPoints": [
+        "Uses the State pattern with explicit transitions and illegal-action handling.",
+        "Money in integer minor units.",
+        "Computes change before dispensing; refunds when change is impossible.",
+        "Notes greedy change can fail with limited coin counts.",
+        "Separates hardware/payment interfaces for testability and extension."
+      ]
+    }
+  },
+  {
+    "slug": "library-management",
+    "type": "LLD",
+    "title": "Design a Library Management System",
+    "difficulty": "EASY",
+    "tags": [
+      "solid",
+      "extensibility",
+      "persistence"
+    ],
+    "companies": [
+      "oracle",
+      "walmart-global-tech"
+    ],
+    "bodyMd": "Design a library management system for a city library with several branches. Members search the catalogue, borrow and return physical copies, place holds on books that are checked out, and pay fines for late returns.\n\n**Produce:** the domain classes (distinguishing a title from its physical copies), the borrow/return/hold flows, how fines are computed, and how you would keep the design open to new item types and membership plans.",
+    "lld": {
+      "requirements": [
+        "Catalogue of titles (ISBN, title, authors, subject) with many physical copies per branch.",
+        "Search by title, author, subject or ISBN.",
+        "Members can borrow up to a plan-dependent limit (e.g. 5 for Standard, 10 for Premium).",
+        "Loans have due dates; returns after the due date incur a per-day fine with a cap.",
+        "Members can place a hold on a title with no available copy; holds are served first-come-first-served.",
+        "When a copy is returned and a hold exists, it is reserved for the next member for 3 days.",
+        "Librarians can add/remove copies and mark copies lost or damaged."
+      ],
+      "focusAreas": [
+        "SOLID",
+        "DESIGN_PATTERNS",
+        "EXTENSIBILITY",
+        "PERSISTENCE"
+      ],
+      "referenceDesignMd": "### Domain\n- **Title** (bibliographic record: ISBN, name, authors, subjects) vs **Copy** (barcode, branch, `CopyStatus`: AVAILABLE, ON_LOAN, ON_HOLD_SHELF, LOST, DAMAGED). Separating them is the key modelling decision: search and holds work on titles, loans work on copies.\n- **Member** — id, `MembershipPlan`, active loans, outstanding fines.\n- **Loan** — copy, member, issuedAt, dueAt, returnedAt.\n- **Hold** — title, member, placedAt, status (WAITING, READY, FULFILLED, EXPIRED), readyUntil.\n- **Fine** — loan, amount, paid flag.\n\n### Services\n- **CatalogService** — search via a `SearchIndex` interface (in-memory inverted index or a search engine).\n- **CirculationService** — `checkout(memberId, barcode)`, `return(barcode)`. Checkout validates: copy AVAILABLE (or ON_HOLD_SHELF for this member), member under plan limit, no unpaid fines above a threshold.\n- **HoldService** — per-title FIFO queue of holds. On return, if the title has a waiting hold, the copy goes ON_HOLD_SHELF and the member is notified; an expiry job moves unclaimed holds on after 3 days.\n- **FineCalculator** (Strategy) — `DailyFinePolicy` with cap; plans can carry different policies; holidays come from an injected calendar.\n\n### Patterns and SOLID\n- **Strategy** for fine policies and loan-period rules per `MembershipPlan`.\n- **Observer** / domain events (`CopyReturned`, `HoldReady`) consumed by `NotificationService` (email/SMS), keeping circulation free of messaging code.\n- **Repository** interfaces per aggregate so persistence (SQL) is swappable and services are unit-testable.\n- Single Responsibility: search, circulation, holds and billing are separate services.\n\n### Persistence and consistency\nCheckout updates the copy status and inserts a loan in one transaction with a conditional update on the copy (`WHERE status = 'AVAILABLE'`) so two librarians cannot lend the same copy.\n\n### Extension points\nNew item types (DVDs, e-books with licence counts) as subtypes of a `LibraryItem` with their own loan rules; inter-branch transfers; online renewals.",
+      "referenceMermaid": "classDiagram\n  class Title {\n    -String isbn\n    -String name\n    -List~String~ authors\n  }\n  class Copy {\n    -String barcode\n    -String branchId\n    -CopyStatus status\n  }\n  class Member {\n    -String id\n    -MembershipPlan plan\n  }\n  class MembershipPlan {\n    -int maxLoans\n    -int loanDays\n    -FinePolicy finePolicy\n  }\n  class Loan {\n    -Copy copy\n    -Member member\n    -LocalDate dueAt\n    -LocalDate returnedAt\n  }\n  class Hold {\n    -Title title\n    -Member member\n    -HoldStatus status\n    -LocalDate readyUntil\n  }\n  class FinePolicy {\n    <<interface>>\n    +fineFor(Loan l, LocalDate returned) Money\n  }\n  class DailyFinePolicy\n  class CirculationService {\n    +checkout(String memberId, String barcode) Loan\n    +returnCopy(String barcode) void\n  }\n  class HoldService {\n    +placeHold(String memberId, String isbn) Hold\n    +onCopyReturned(Copy c) void\n  }\n  Title \"1\" *-- \"many\" Copy\n  Member --> MembershipPlan\n  MembershipPlan --> FinePolicy\n  FinePolicy <|.. DailyFinePolicy\n  Loan --> Copy\n  Loan --> Member\n  Hold --> Title\n  Hold --> Member\n  CirculationService ..> Loan\n  CirculationService --> HoldService",
+      "expectedPoints": [
+        "Distinguishes Title (catalogue) from Copy (physical inventory).",
+        "Validates checkout rules (status, plan limits, fines) in one service.",
+        "FIFO hold queue per title with ready-shelf expiry.",
+        "Fine calculation as a strategy tied to membership plans.",
+        "Transactional/conditional update to prevent lending the same copy twice."
+      ]
+    }
+  },
+  {
+    "slug": "food-delivery-order-lifecycle",
+    "type": "LLD",
+    "title": "Design a Food-Delivery Order Lifecycle",
+    "difficulty": "HARD",
+    "tags": [
+      "state-machine",
+      "design-patterns",
+      "concurrency"
+    ],
+    "companies": [
+      "swiggy",
+      "zomato",
+      "uber"
+    ],
+    "bodyMd": "Design the order-management core of a food-delivery platform. An order moves from placement through restaurant acceptance, preparation, rider assignment, pickup and delivery — and can be cancelled or fail at several points. Many actors (customer app, restaurant app, rider app, payment gateway, timers) send events concurrently.\n\n**Produce:** the order state machine, the classes that own transitions, how concurrent and duplicate events are handled, how side effects (refunds, notifications, rider assignment) are triggered, and how the design supports new order types.",
+    "lld": {
+      "requirements": [
+        "States: CREATED, PAYMENT_PENDING, PLACED, ACCEPTED, PREPARING, READY_FOR_PICKUP, PICKED_UP, DELIVERED, CANCELLED, REJECTED.",
+        "Only valid transitions are allowed; each records who triggered it and when.",
+        "Restaurant must accept within a timeout, otherwise the order is auto-rejected and refunded.",
+        "A rider is assigned once the restaurant accepts; reassign if the rider declines or goes offline.",
+        "Cancellation rules and refund amount depend on the current state.",
+        "Duplicate or out-of-order events (e.g. retried webhooks) must not corrupt state.",
+        "Customers, restaurants and riders receive notifications on relevant transitions.",
+        "Support future variants such as scheduled orders and self-pickup without rewriting the core."
+      ],
+      "focusAreas": [
+        "DESIGN_PATTERNS",
+        "CONCURRENCY",
+        "EXTENSIBILITY",
+        "PERSISTENCE",
+        "SOLID"
+      ],
+      "referenceDesignMd": "### Core classes\n- **Order** (aggregate) — id, customer, restaurant, items, amounts, `OrderStatus`, `version`, rider id, and an append-only list of `OrderTransition` (from, to, actor, timestamp, eventId).\n- **OrderStateMachine** — a transition table `Map<(OrderStatus, OrderEventType), OrderStatus>` plus guards (e.g. \"cancel by customer allowed until PREPARING\"). The single place that decides validity.\n- **OrderService** — `handle(OrderEvent e)`: load order, check idempotency, ask the state machine, apply, persist, publish domain events.\n- **OrderEvent** — `PaymentSucceeded`, `RestaurantAccepted`, `FoodReady`, `RiderAssigned`, `PickedUp`, `Delivered`, `CancelRequested`, `AcceptTimeout`, each with an `eventId`.\n- **Side-effect handlers** subscribed to domain events: `RiderAssignmentHandler`, `RefundHandler`, `NotificationHandler`, `TimeoutScheduler`.\n- **CancellationPolicy** (Strategy) — refund percentage by state and actor.\n\n### Patterns\n- **State machine** as data (table + guards) rather than scattered `if` checks; the **State** pattern is an equally good answer if each state needs rich behaviour.\n- **Observer / publish-subscribe** for side effects, keeping `OrderService` free of rider, payment and messaging logic (SRP, OCP).\n- **Strategy** for cancellation and rider-matching policies.\n- **Template/variant flows**: `OrderFlow` definitions per order type (delivery, self-pickup skips rider states, scheduled adds SCHEDULED).\n\n### Concurrency and idempotency\nEvents for the same order may arrive simultaneously (customer cancels while restaurant accepts). Each update uses **optimistic locking**: `UPDATE orders SET status=?, version=version+1 WHERE id=? AND version=?`; on conflict, reload and re-evaluate — the second event may now be invalid and is rejected cleanly. Processed `eventId`s are stored (unique constraint) so retried webhooks are no-ops. Alternatively, partition events by order id onto a single consumer for per-order serial processing.\n\nSide effects use the **transactional outbox**: the state change and the outgoing event are written in one transaction; a relay publishes them, so a crash never leaves \"cancelled but not refunded\".\n\n### Timeouts\nOn PLACED, schedule an `AcceptTimeout` (delayed queue). When it fires, it is just another event; if the order was already ACCEPTED, the state machine rejects it — no special-case code.\n\n### Extension points\nNew order types via new flows, new notification channels via new subscribers, and analytics consumers reading the transition log.",
+      "referenceMermaid": "classDiagram\n  class Order {\n    -String id\n    -OrderStatus status\n    -long version\n    -String riderId\n    -List~OrderTransition~ history\n    +apply(OrderStatus to, OrderEvent e) void\n  }\n  class OrderTransition {\n    -OrderStatus from\n    -OrderStatus to\n    -String actor\n    -String eventId\n    -Instant at\n  }\n  class OrderStateMachine {\n    -Map transitions\n    +next(Order o, OrderEvent e) OrderStatus\n  }\n  class OrderService {\n    +handle(OrderEvent e) void\n  }\n  class OrderEvent {\n    <<abstract>>\n    -String eventId\n    -String orderId\n    -String actor\n  }\n  class RestaurantAccepted\n  class CancelRequested\n  class AcceptTimeout\n  class OrderRepository {\n    <<interface>>\n    +load(String id) Order\n    +saveIfVersion(Order o, long expected) boolean\n  }\n  class OutboxPublisher {\n    +publish(DomainEvent d) void\n  }\n  class DomainEventHandler {\n    <<interface>>\n    +on(DomainEvent d) void\n  }\n  class RefundHandler\n  class RiderAssignmentHandler\n  class NotificationHandler\n  class CancellationPolicy {\n    <<interface>>\n    +refundFor(Order o, String actor) Money\n  }\n  Order \"1\" *-- \"many\" OrderTransition\n  OrderService --> OrderStateMachine\n  OrderService --> OrderRepository\n  OrderService --> OutboxPublisher\n  OrderEvent <|-- RestaurantAccepted\n  OrderEvent <|-- CancelRequested\n  OrderEvent <|-- AcceptTimeout\n  DomainEventHandler <|.. RefundHandler\n  DomainEventHandler <|.. RiderAssignmentHandler\n  DomainEventHandler <|.. NotificationHandler\n  OutboxPublisher --> DomainEventHandler\n  RefundHandler --> CancellationPolicy",
+      "expectedPoints": [
+        "Explicit state machine with a single owner of transition rules and guards.",
+        "Optimistic locking (or per-order serialisation) for concurrent events.",
+        "Idempotency via stored event ids for retried/duplicate events.",
+        "Side effects decoupled through events with a transactional outbox.",
+        "Timeouts modelled as ordinary events.",
+        "State-dependent cancellation/refund policy; extensible order flows."
+      ]
+    }
+  },
+  {
+    "slug": "in-memory-pub-sub",
+    "type": "LLD",
+    "title": "Design an In-Memory Pub/Sub Message Broker",
+    "difficulty": "HARD",
+    "tags": [
+      "concurrency",
+      "design-patterns",
+      "extensibility"
+    ],
+    "companies": [
+      "atlassian",
+      "google",
+      "salesforce"
+    ],
+    "bodyMd": "Design an in-process publish/subscribe library. Publishers send messages to named topics; subscribers register on topics and receive messages asynchronously. Several subscribers can share a consumer group so each message goes to only one of them.\n\n**Produce:** the public API, the classes for topics, partitions/queues, subscriptions and dispatch, the delivery guarantees you offer, how slow subscribers are handled, and how the threading model works.",
+    "lld": {
+      "requirements": [
+        "Create and delete topics; publish a message (key, payload, headers) to a topic.",
+        "Subscribe with a callback; every subscription (or consumer group) receives each message once.",
+        "Within a consumer group, each message is delivered to exactly one member.",
+        "Preserve publish order per message key.",
+        "Delivery is asynchronous; a slow subscriber must not block publishers or other subscribers.",
+        "At-least-once delivery with acknowledgement and bounded retries; failed messages go to a dead-letter topic.",
+        "Configurable back-pressure when a subscriber's buffer is full (block, drop oldest, or reject).",
+        "Graceful shutdown that drains in-flight messages."
+      ],
+      "focusAreas": [
+        "CONCURRENCY",
+        "DESIGN_PATTERNS",
+        "EXTENSIBILITY",
+        "API_DESIGN"
+      ],
+      "referenceDesignMd": "### API\n`Broker.createTopic(name, partitions)`, `Broker.publish(topic, Message)` -> `CompletableFuture<Offset>`, `Broker.subscribe(topic, groupId, Handler, SubscriptionOptions)` -> `Subscription` (with `pause`, `resume`, `close`). `Handler.handle(Message)` returns normally to ack or throws to nack.\n\n### Core classes\n- **Topic** — name and `Partition[]`. A message's partition is `hash(key) % n` (round-robin when key is null), which gives per-key ordering.\n- **Partition** — an append-only log (`ArrayList` or ring buffer segment) with a monotonically increasing offset. Retention by size/time.\n- **ConsumerGroup** — members and a partition-to-member assignment; stores the committed offset per partition. Rebalances when members join/leave (**Strategy**: range or round-robin assignor).\n- **Dispatcher** — one worker per (group, partition) reading from the committed offset and invoking the assigned member's handler. One-at-a-time per partition preserves order.\n- **RetryPolicy** (Strategy) — max attempts, backoff; exhausting it publishes to `<topic>.dlq`.\n- **Message** — immutable id, key, payload, headers, timestamp.\n\n### Delivery semantics\nThe offset is committed only after the handler returns, so a crash or exception redelivers: **at-least-once**; handlers must be idempotent (message id is provided for dedup). Exactly-once is explicitly out of scope in-process; say why.\n\n### Threading and back-pressure\nPublishers append under a per-partition lock (or a single-writer queue) — appends are O(1) and short. Dispatch runs on an `ExecutorService`; each partition worker is a serial task, so different partitions and groups proceed in parallel and a slow handler only delays its own partition. When a subscriber falls behind, the log keeps the data; for bounded memory, retention plus a `BackpressurePolicy` (BLOCK publisher with timeout, DROP_OLDEST, or REJECT) applies. Using a log with offsets instead of per-subscriber copies means fan-out to many groups costs no extra memory.\n\n### Patterns\n**Observer** at the conceptual level, **Strategy** for partitioning/assignment/retry/back-pressure, **Builder** for subscription options, **Decorator** handlers for metrics and tracing.\n\n### Shutdown and extension\n`close()` stops accepting publishes, lets workers finish the current message and commit, then terminates the executor with a timeout. Extensions: persistent log segments on disk, wildcard topics, message filters, and a network transport turning it into a standalone broker.",
+      "referenceMermaid": "classDiagram\n  class Broker {\n    -Map topics\n    -ExecutorService executor\n    +createTopic(String name, int partitions) Topic\n    +publish(String topic, Message m) CompletableFuture\n    +subscribe(String topic, String group, Handler h, SubscriptionOptions o) Subscription\n    +close() void\n  }\n  class Topic {\n    -String name\n    -Partition[] partitions\n    -Partitioner partitioner\n  }\n  class Partition {\n    -List~Message~ log\n    -long nextOffset\n    +append(Message m) long\n    +read(long offset, int max) List~Message~\n  }\n  class Message {\n    -String id\n    -String key\n    -byte[] payload\n    -Map headers\n  }\n  class ConsumerGroup {\n    -String id\n    -List~Subscription~ members\n    -Map committedOffsets\n    +rebalance() void\n  }\n  class Subscription {\n    -Handler handler\n    -SubscriptionOptions options\n    +pause() void\n    +close() void\n  }\n  class Dispatcher {\n    +runPartition(ConsumerGroup g, Partition p) void\n  }\n  class Handler {\n    <<interface>>\n    +handle(Message m) void\n  }\n  class RetryPolicy {\n    <<interface>>\n    +nextDelay(int attempt) Optional\n  }\n  class Partitioner {\n    <<interface>>\n    +partition(Message m, int n) int\n  }\n  Broker \"1\" *-- \"many\" Topic\n  Topic \"1\" *-- \"many\" Partition\n  Partition \"1\" o-- \"many\" Message\n  Topic --> Partitioner\n  Broker \"1\" *-- \"many\" ConsumerGroup\n  ConsumerGroup \"1\" o-- \"many\" Subscription\n  Subscription --> Handler\n  Dispatcher --> ConsumerGroup\n  Dispatcher --> RetryPolicy",
+      "expectedPoints": [
+        "Log + offset model per partition rather than copying messages per subscriber.",
+        "Key-based partitioning for per-key ordering; consumer groups with partition assignment.",
+        "At-least-once via commit-after-handle; idempotent handlers; DLQ after retries.",
+        "Threading model where a slow subscriber only affects its own partition.",
+        "Explicit back-pressure policy and graceful shutdown.",
+        "Clean API with futures/subscription handles; strategies for pluggable behaviour."
+      ]
+    }
+  }
+]

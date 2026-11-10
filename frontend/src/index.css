@@ -1,0 +1,246 @@
+@import 'tailwindcss';
+@import '@fontsource/space-grotesk/400.css';
+@import '@fontsource/space-grotesk/500.css';
+@import '@fontsource/space-grotesk/700.css';
+@import '@fontsource/space-mono/400.css';
+@import '@fontsource/space-mono/700.css';
+
+/*
+ * Neo-brutalist design system.
+ * Flat colour, thick ink borders, hard offset shadows, no blur, no gradients, big type.
+ * Every accent colour is light enough that ink (#0a0a0a) text on it passes WCAG AA, in both themes.
+ */
+:root {
+  --paper: #fffbef;
+  --surface: #ffffff;
+  --ink: #0a0a0a;
+  --muted: #3d3a35;
+  --shadow: #0a0a0a;
+  --yellow: #ffd84d;
+  --pink: #ff9ebb;
+  --blue: #8ab8ff;
+  --green: #7ee0a1;
+  --orange: #ffa66b;
+  --violet: #c2b0ff;
+  --red: #ff6b6b;
+  font-family: var(--font-sans);
+  color-scheme: light;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #15130f;
+    --surface: #23201b;
+    --ink: #f6f1e6;
+    --muted: #cfc8b9;
+    --shadow: #f6f1e6;
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --font-sans: 'Space Grotesk', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-nb-yellow: var(--yellow);
+  --color-nb-pink: var(--pink);
+  --color-nb-blue: var(--blue);
+  --color-nb-green: var(--green);
+  --color-nb-orange: var(--orange);
+  --color-nb-violet: var(--violet);
+  --color-nb-red: var(--red);
+}
+
+body {
+  background-color: var(--paper);
+  color: var(--ink);
+  /* Subtle dot grid: texture without decoration noise. */
+  background-image: radial-gradient(color-mix(in srgb, var(--ink) 14%, transparent) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+@layer components {
+  .nb-card {
+    background: var(--surface);
+    color: var(--ink);
+    border: 3px solid var(--ink);
+    box-shadow: 6px 6px 0 0 var(--shadow);
+  }
+  .nb-card-sm {
+    background: var(--surface);
+    color: var(--ink);
+    border: 3px solid var(--ink);
+    box-shadow: 4px 4px 0 0 var(--shadow);
+  }
+  /* Accent panels always use ink-coloured (#0a0a0a) text so contrast holds in dark mode too. */
+  .nb-accent {
+    color: #0a0a0a;
+    border: 3px solid var(--ink);
+    box-shadow: 6px 6px 0 0 var(--shadow);
+  }
+
+  .nb-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.1rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    line-height: 1.2;
+    border: 3px solid var(--ink);
+    box-shadow: 4px 4px 0 0 var(--shadow);
+    transition: transform 80ms ease, box-shadow 80ms ease;
+    cursor: pointer;
+    text-decoration: none;
+    user-select: none;
+  }
+  .nb-btn:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 0 var(--shadow);
+  }
+  .nb-btn:active:not(:disabled) {
+    transform: translate(3px, 3px);
+    box-shadow: 0 0 0 0 var(--shadow);
+  }
+  .nb-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+  .nb-btn-primary {
+    background: var(--yellow);
+    color: #0a0a0a;
+  }
+  .nb-btn-secondary {
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .nb-btn-danger {
+    background: var(--red);
+    color: #0a0a0a;
+  }
+  .nb-btn-ink {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .nb-btn-sm {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.85rem;
+    box-shadow: 3px 3px 0 0 var(--shadow);
+  }
+
+  .nb-input {
+    display: block;
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    background: var(--surface);
+    color: var(--ink);
+    border: 3px solid var(--ink);
+    font-weight: 500;
+  }
+  .nb-input::placeholder {
+    color: var(--muted);
+    opacity: 0.8;
+  }
+  .nb-input:focus {
+    outline: none;
+    box-shadow: 4px 4px 0 0 var(--shadow);
+    background: color-mix(in srgb, var(--yellow) 22%, var(--surface));
+  }
+  .nb-input[aria-invalid='true'] {
+    border-color: var(--red);
+    box-shadow: 4px 4px 0 0 var(--red);
+  }
+
+  .nb-label {
+    display: block;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .nb-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.1rem 0.5rem;
+    border: 2px solid var(--ink);
+    color: #0a0a0a;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .nb-link {
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+    text-underline-offset: 4px;
+    text-decoration-color: var(--yellow);
+  }
+  .nb-link:hover {
+    background: var(--yellow);
+    color: #0a0a0a;
+  }
+
+  .nb-heading {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+
+  /* A word highlighted like a marker stroke. */
+  .nb-mark {
+    background: var(--yellow);
+    color: #0a0a0a;
+    padding: 0 0.25em;
+    box-decoration-break: clone;
+  }
+
+  .nb-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .nb-table th {
+    background: var(--ink);
+    color: var(--paper);
+    font-weight: 700;
+    text-align: left;
+    padding: 0.6rem 0.8rem;
+  }
+  .nb-table td {
+    border-top: 2px solid var(--ink);
+    padding: 0.6rem 0.8rem;
+  }
+
+  .nb-check {
+    accent-color: var(--ink);
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+}
+
+:focus-visible {
+  outline: 3px dashed var(--ink);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .nb-btn:hover:not(:disabled),
+  .nb-btn:active:not(:disabled) {
+    transform: none;
+  }
+}

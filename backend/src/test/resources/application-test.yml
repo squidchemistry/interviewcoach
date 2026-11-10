@@ -1,0 +1,22 @@
+# Test profile: activated by @IntegrationTest and the other *IT classes.
+app:
+  ai:
+    provider: mock
+    mock-stream-delay-ms: 0
+  execution:
+    provider: mock
+  billing:
+    provider: mock
+  auth:
+    jwt:
+      # Test-only signing key (random, not used anywhere else).
+      secret: 9Du8opl2vuMNci6k5vOX4+Dml8YpZm4HPjI6t1brf0/VAPVvDc31enr29xHtu9LB
+  seed:
+    enabled: true
+    demo-password: DemoPassw0rd
+    admin-password: AdminPassw0rd
+  rate-limit:
+    # Generous limits so ordinary tests never trip them; RateLimitIT overrides these.
+    auth: { capacity: 1000, period: 1m }
+    refresh: { capacity: 1000, period: 1m }
+    api: { capacity: 10000, period: 1m }

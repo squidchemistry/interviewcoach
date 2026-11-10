@@ -1,0 +1,709 @@
+[
+  {
+    "slug": "conflict-with-teammate",
+    "type": "BEHAVIOURAL",
+    "title": "Disagreement with a teammate",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "conflict",
+      "teamwork"
+    ],
+    "companies": [],
+    "bodyMd": "Tell me about a time you strongly disagreed with a teammate about a technical decision. How did you handle it, and what was the outcome?",
+    "behavioural": {
+      "competency": "Conflict resolution",
+      "leadershipPrinciple": null,
+      "whatGoodLooksLike": "A strong answer names a **specific, consequential** disagreement (not a tabs-vs-spaces debate) and shows the candidate first tried to understand the other person's reasoning. They moved the discussion from opinions to evidence — a prototype, benchmark, design doc or agreed criteria — and kept it about the problem, not the person. The **Result** is concrete: what was decided, how it played out, and how the working relationship held up. The best answers include a moment where the candidate changed their own mind on part of the issue, or committed fully to a decision they did not prefer.",
+      "followUpProbes": [
+        "What was the strongest argument on your teammate's side?",
+        "What evidence or criteria did you use to settle it?",
+        "If the decision had gone the other way, what would you have done?",
+        "How is your relationship with that person today?",
+        "Looking back, was the final decision right?"
+      ],
+      "expectedPoints": [
+        "Specific technical disagreement with real stakes",
+        "Sought to understand the other view before arguing",
+        "Used data, prototypes or agreed criteria rather than seniority",
+        "Kept it respectful and private where appropriate",
+        "Clear outcome and reflection, including what they would change"
+      ]
+    }
+  },
+  {
+    "slug": "tell-me-about-a-failure",
+    "type": "BEHAVIOURAL",
+    "title": "A project that failed",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "failure",
+      "ownership",
+      "learning"
+    ],
+    "companies": [],
+    "bodyMd": "Describe a time something you were responsible for failed or went badly wrong. What happened, what was your part in it, and what did you change afterwards?",
+    "behavioural": {
+      "competency": "Accountability and learning from failure",
+      "leadershipPrinciple": null,
+      "whatGoodLooksLike": "Strong candidates pick a **real** failure with visible impact (a missed launch, a production incident, a wrong design choice) rather than a disguised success. They describe their own contribution plainly, without shifting blame to others or to 'the process'. The answer shows how they limited the damage once the problem surfaced, how they communicated it, and — most importantly — the **specific, lasting change** they made: a new check, a habit, a design review step. Good answers quantify the impact and show the lesson has since been applied successfully.",
+      "followUpProbes": [
+        "What was the earliest signal that things were going wrong, and did you notice it?",
+        "What exactly would you do differently if you could replay it?",
+        "How did you communicate the failure to stakeholders?",
+        "Have you seen that lesson pay off since?"
+      ],
+      "expectedPoints": [
+        "Genuine failure with real impact",
+        "Owns their part without blaming others",
+        "Damage control and transparent communication",
+        "Specific root cause, not a vague lesson",
+        "Concrete change in behaviour or process, applied later"
+      ]
+    }
+  },
+  {
+    "slug": "led-without-authority",
+    "type": "BEHAVIOURAL",
+    "title": "Leading without formal authority",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "leadership",
+      "influence"
+    ],
+    "companies": [],
+    "bodyMd": "Tell me about a time you led an initiative or drove a change across people who did not report to you.",
+    "behavioural": {
+      "competency": "Leadership and influence",
+      "leadershipPrinciple": null,
+      "whatGoodLooksLike": "A strong answer shows the candidate spotted a problem worth solving and took the initiative without being asked. Because they had no authority, they built buy-in: framing the change in terms of what others cared about, finding early allies, starting with a small pilot and making it easy to adopt. They handled at least one sceptic thoughtfully. The **Result** includes adoption metrics or outcomes (e.g. 'four teams migrated, build times dropped 40%') and what happened after they stepped back — did the change stick?",
+      "followUpProbes": [
+        "Who resisted the change and why?",
+        "How did you get the first people on board?",
+        "What did you have to give up or compromise on?",
+        "Is the change still in place today?"
+      ],
+      "expectedPoints": [
+        "Took initiative on a problem nobody owned",
+        "Built buy-in by aligning with others' goals",
+        "Handled resistance constructively",
+        "Measurable outcome and sustained adoption",
+        "Shared credit with contributors"
+      ]
+    }
+  },
+  {
+    "slug": "ambiguous-requirements",
+    "type": "BEHAVIOURAL",
+    "title": "Working through ambiguity",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "ambiguity",
+      "ownership"
+    ],
+    "companies": [],
+    "bodyMd": "Describe a project where the requirements were unclear or kept changing. How did you decide what to build?",
+    "behavioural": {
+      "competency": "Dealing with ambiguity",
+      "leadershipPrinciple": null,
+      "whatGoodLooksLike": "Good answers show the candidate did not wait for perfect clarity. They identified what was unknown, separated reversible from irreversible decisions, and reduced uncertainty cheaply — talking to users, building a thin prototype, writing down assumptions and getting them confirmed. They made progress on the parts that were stable and designed for change where things were likely to move. The answer shows clear communication of trade-offs and assumptions to stakeholders and a result that justified the approach.",
+      "followUpProbes": [
+        "Which assumptions did you make, and how did you validate them?",
+        "How did you decide what was safe to build before things were clear?",
+        "What did you do when a requirement changed late?",
+        "What would you do differently next time to reduce ambiguity earlier?"
+      ],
+      "expectedPoints": [
+        "Named the unknowns explicitly",
+        "Reduced uncertainty with cheap experiments or stakeholder conversations",
+        "Distinguished reversible from irreversible decisions",
+        "Documented and communicated assumptions",
+        "Delivered value despite change"
+      ]
+    }
+  },
+  {
+    "slug": "tight-deadline-prioritisation",
+    "type": "BEHAVIOURAL",
+    "title": "Prioritising under a tight deadline",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "prioritisation",
+      "ownership"
+    ],
+    "companies": [],
+    "bodyMd": "Tell me about a time you had more work than you could finish before an important deadline. How did you decide what to do and what to drop?",
+    "behavioural": {
+      "competency": "Prioritisation and time management",
+      "leadershipPrinciple": null,
+      "whatGoodLooksLike": "Strong answers make the trade-off explicit. The candidate listed what was in scope, judged each item by impact, risk and effort, and agreed the cut line with the right stakeholders rather than quietly dropping work or silently working unsustainable hours. They protected quality on the critical path (tests, rollback plan) and descoped or deferred the rest with a plan to return to it. The result shows what shipped, what slipped, and whether the choices were right in hindsight.",
+      "followUpProbes": [
+        "What criteria did you use to rank the work?",
+        "Who did you involve in deciding what to cut?",
+        "What quality corners, if any, did you cut, and how did you manage the risk?",
+        "What happened to the deferred work?"
+      ],
+      "expectedPoints": [
+        "Explicit prioritisation criteria",
+        "Negotiated scope with stakeholders early",
+        "Protected quality on the critical path",
+        "Transparent about what was dropped",
+        "Follow-up on deferred items"
+      ]
+    }
+  },
+  {
+    "slug": "difficult-feedback",
+    "type": "BEHAVIOURAL",
+    "title": "Receiving tough feedback",
+    "difficulty": "EASY",
+    "tags": [
+      "learning",
+      "teamwork"
+    ],
+    "companies": [],
+    "bodyMd": "Tell me about a piece of critical feedback you received. How did you respond, and what did you change?",
+    "behavioural": {
+      "competency": "Coachability and self-awareness",
+      "leadershipPrinciple": null,
+      "whatGoodLooksLike": "A good answer cites feedback that genuinely stung or surprised the candidate, not a humble-brag ('I work too hard'). They describe their honest first reaction, then how they sought specifics and examples instead of being defensive. The core is the **concrete change** they made and evidence that it worked — for example, later feedback, a successful project, or a metric. Mature answers also show they now actively seek feedback, and can explain how they decide which feedback to act on and which to set aside.",
+      "followUpProbes": [
+        "What was your first reaction when you heard it?",
+        "Did you agree with all of it?",
+        "How did you check that you had actually improved?",
+        "How do you seek feedback today?"
+      ],
+      "expectedPoints": [
+        "Real, specific critical feedback",
+        "Non-defensive, curious response",
+        "Concrete behavioural change",
+        "Evidence of improvement",
+        "Ongoing habit of seeking feedback"
+      ]
+    }
+  },
+  {
+    "slug": "mentoring-a-junior",
+    "type": "BEHAVIOURAL",
+    "title": "Helping someone grow",
+    "difficulty": "EASY",
+    "tags": [
+      "leadership",
+      "teamwork"
+    ],
+    "companies": [],
+    "bodyMd": "Tell me about a time you helped a less experienced engineer become more effective.",
+    "behavioural": {
+      "competency": "Mentoring and developing others",
+      "leadershipPrinciple": null,
+      "whatGoodLooksLike": "Strong answers show the candidate diagnosed what the person actually needed (technical gaps, confidence, context about the codebase) rather than applying a generic approach. They describe specific actions — pairing, structured code reviews, gradually larger ownership, safe stretch tasks — and how they balanced helping with letting the person struggle productively. The result is about the other person's growth (they shipped X independently, were promoted, now mentor others), not the candidate's heroics. Strong candidates also mention what the experience taught them about their own communication style.",
+      "followUpProbes": [
+        "How did you figure out what they needed?",
+        "When did you step back and let them own something?",
+        "What did not work in your approach?",
+        "What did you learn about mentoring from it?"
+      ],
+      "expectedPoints": [
+        "Diagnosed the individual's needs",
+        "Specific mentoring techniques",
+        "Gradually increasing ownership",
+        "Outcome measured by the mentee's growth",
+        "Reflection on their own approach"
+      ]
+    }
+  },
+  {
+    "slug": "production-incident",
+    "type": "BEHAVIOURAL",
+    "title": "Handling a production incident",
+    "difficulty": "HARD",
+    "tags": [
+      "ownership",
+      "customer-focus"
+    ],
+    "companies": [],
+    "bodyMd": "Walk me through a serious production incident you were involved in. What was your role during the incident and afterwards?",
+    "behavioural": {
+      "competency": "Operational ownership under pressure",
+      "leadershipPrinciple": null,
+      "whatGoodLooksLike": "A strong answer shows calm, structured action: assessing customer impact first, mitigating quickly (rollback, feature flag, failover) before hunting the root cause, and communicating status clearly to stakeholders. The candidate is precise about their own role versus the team's. Afterwards they drove or contributed to a blameless post-mortem, found the real root cause (often a process or detection gap, not just the bug) and followed through on action items. Numbers help: duration, users affected, time to detect and time to mitigate.",
+      "followUpProbes": [
+        "How was the issue detected, and how could it have been detected sooner?",
+        "Why did you choose that mitigation?",
+        "What was the root cause, and what was the contributing process gap?",
+        "Which post-incident actions were completed, and how do you know they worked?"
+      ],
+      "expectedPoints": [
+        "Prioritised mitigation and customer impact over root-causing",
+        "Clear communication during the incident",
+        "Accurate account of personal role",
+        "Blameless root cause analysis including detection gaps",
+        "Followed through on preventive actions"
+      ]
+    }
+  },
+  {
+    "slug": "pushback-from-stakeholder",
+    "type": "BEHAVIOURAL",
+    "title": "Saying no to a stakeholder",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "influence",
+      "conflict",
+      "customer-focus"
+    ],
+    "companies": [],
+    "bodyMd": "Tell me about a time a product manager or senior stakeholder asked for something you believed was the wrong thing to build or the wrong timeline. What did you do?",
+    "behavioural": {
+      "competency": "Stakeholder management",
+      "leadershipPrinciple": null,
+      "whatGoodLooksLike": "Good answers show the candidate first understood the underlying goal behind the request. They pushed back with evidence (cost, risk, user data) and — crucially — offered alternatives that met the real need, such as a smaller first version or a different sequence. They escalated respectfully only when needed and, once a decision was made, committed to it. The result shows a better outcome than the original ask or a relationship that strengthened despite the disagreement.",
+      "followUpProbes": [
+        "What was the stakeholder really trying to achieve?",
+        "What alternative did you propose?",
+        "How did you present the risks?",
+        "What would you have done if they had insisted?"
+      ],
+      "expectedPoints": [
+        "Understood the underlying goal",
+        "Evidence-based pushback",
+        "Offered constructive alternatives",
+        "Respectful escalation if needed",
+        "Committed once decided; outcome and relationship"
+      ]
+    }
+  },
+  {
+    "slug": "learned-new-technology-fast",
+    "type": "BEHAVIOURAL",
+    "title": "Ramping up on something new",
+    "difficulty": "EASY",
+    "tags": [
+      "learning",
+      "ambiguity"
+    ],
+    "companies": [],
+    "bodyMd": "Describe a time you had to become productive quickly with a technology, codebase or domain you did not know.",
+    "behavioural": {
+      "competency": "Learning agility",
+      "leadershipPrinciple": null,
+      "whatGoodLooksLike": "A strong answer shows a deliberate learning strategy rather than 'I read the docs'. The candidate scoped what they needed to know for the task, found the fastest sources (experts, existing code, small experiments), and built something small early to test their understanding. They mention how they avoided common pitfalls of new tech and how they validated quality (reviews from experts, tests). The result includes time-to-productivity and what they did to make it easier for the next person (docs, onboarding notes).",
+      "followUpProbes": [
+        "How did you decide what to learn first and what to ignore?",
+        "What mistake did you make while learning?",
+        "Who did you ask for help, and when?",
+        "What did you leave behind for the next person?"
+      ],
+      "expectedPoints": [
+        "Structured, goal-directed learning approach",
+        "Used experts and small experiments",
+        "Validated their work despite inexperience",
+        "Concrete timeline and outcome",
+        "Shared knowledge afterwards"
+      ]
+    }
+  },
+  {
+    "slug": "improved-system-performance",
+    "type": "BEHAVIOURAL",
+    "title": "Improving a slow system",
+    "difficulty": "HARD",
+    "tags": [
+      "ownership",
+      "customer-focus"
+    ],
+    "companies": [],
+    "bodyMd": "Tell me about a time you significantly improved the performance, reliability or cost of a system. How did you find what to fix?",
+    "behavioural": {
+      "competency": "Technical problem solving and impact",
+      "leadershipPrinciple": null,
+      "whatGoodLooksLike": "Strong candidates start from a measurable problem (p99 latency, error rate, monthly cost) and show how they **measured before optimising**: profiling, tracing, load tests, query plans. They explain why they chose that bottleneck over others, the trade-offs of the fix (complexity, consistency, memory), and how they rolled it out safely. The result is quantified (e.g. 'p99 from 1.2s to 180ms') and they mention guarding against regression with dashboards, alerts or benchmarks in CI. Mentioning an optimisation they deliberately chose not to make shows mature judgement.",
+      "followUpProbes": [
+        "How did you establish the baseline?",
+        "What alternatives did you consider, and why reject them?",
+        "What risks did the change introduce?",
+        "How do you know the improvement has held?"
+      ],
+      "expectedPoints": [
+        "Started from a measurable problem",
+        "Profiled/measured to find the true bottleneck",
+        "Explained trade-offs of the chosen fix",
+        "Safe rollout and validation",
+        "Quantified result and regression protection"
+      ]
+    }
+  },
+  {
+    "slug": "cross-team-dependency",
+    "type": "BEHAVIOURAL",
+    "title": "Unblocking a cross-team dependency",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "teamwork",
+      "influence",
+      "prioritisation"
+    ],
+    "companies": [],
+    "bodyMd": "Tell me about a time your work depended on another team that had different priorities. How did you get what you needed?",
+    "behavioural": {
+      "competency": "Cross-team collaboration",
+      "leadershipPrinciple": null,
+      "whatGoodLooksLike": "A good answer shows the candidate understood the other team's constraints and priorities instead of treating them as an obstacle. They made the ask concrete and small, quantified why it mattered, and looked for options that reduced the other team's cost — contributing the change themselves, a temporary workaround, or re-sequencing their own work. Escalation, if used, was transparent and a last resort. The result covers delivery and the relationship afterwards, plus any structural change (an interface contract, a shared roadmap) that prevents the same blockage next time.",
+      "followUpProbes": [
+        "What were the other team's priorities at the time?",
+        "What did you offer to make it easier for them?",
+        "Did you escalate? How?",
+        "What would you do to avoid that dependency next time?"
+      ],
+      "expectedPoints": [
+        "Empathy for the other team's constraints",
+        "Clear, quantified, minimal ask",
+        "Offered to share the work or found workarounds",
+        "Escalated transparently only if needed",
+        "Outcome plus relationship health"
+      ]
+    }
+  },
+  {
+    "slug": "ethical-or-quality-stand",
+    "type": "BEHAVIOURAL",
+    "title": "Standing up for quality",
+    "difficulty": "HARD",
+    "tags": [
+      "ownership",
+      "conflict",
+      "customer-focus"
+    ],
+    "companies": [],
+    "bodyMd": "Tell me about a time you were under pressure to ship something you believed was not ready — for quality, security or user-trust reasons. What did you do?",
+    "behavioural": {
+      "competency": "Integrity and judgement",
+      "leadershipPrinciple": null,
+      "whatGoodLooksLike": "Strong answers show judgement, not just stubbornness. The candidate articulated the specific risk (data loss, security hole, broken user flow) and its likely impact, and proposed options: ship behind a flag, reduce scope, add a mitigation, or delay with a clear date. They involved the right decision makers and documented the risk. Whether or not they 'won', they handled the outcome professionally and the result shows whether their concern was validated. Weak answers are either pure compliance or a refusal with no alternative offered.",
+      "followUpProbes": [
+        "How did you quantify the risk?",
+        "What options did you put on the table?",
+        "Who made the final call?",
+        "If you were overruled, what did you do next?"
+      ],
+      "expectedPoints": [
+        "Specific, credible risk identified",
+        "Proposed alternatives rather than a flat no",
+        "Involved appropriate decision makers",
+        "Professional handling of the decision",
+        "Reflection on whether the call was right"
+      ]
+    }
+  },
+  {
+    "slug": "customer-impact-decision",
+    "type": "BEHAVIOURAL",
+    "title": "Putting the user first",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "customer-focus",
+      "prioritisation"
+    ],
+    "companies": [],
+    "bodyMd": "Tell me about a technical decision you made where understanding the end user changed what you built.",
+    "behavioural": {
+      "competency": "User empathy",
+      "leadershipPrinciple": null,
+      "whatGoodLooksLike": "Good answers show the candidate went beyond the ticket to understand how real users would experience the feature — through support tickets, analytics, user interviews or using the product themselves. They describe what they learned and how it changed the technical approach (e.g. prioritising offline support, latency on low-end devices, clearer error states). The result is measured in user terms: adoption, fewer support tickets, conversion or satisfaction. The best answers also mention something the candidate chose not to build because users did not need it.",
+      "followUpProbes": [
+        "How did you learn about the users' needs?",
+        "What did you originally plan to build?",
+        "What trade-off did the user insight force?",
+        "How did you measure the effect on users?"
+      ],
+      "expectedPoints": [
+        "Direct engagement with user data or users",
+        "Insight that changed the design",
+        "Clear trade-off made for users",
+        "User-centred result metrics"
+      ]
+    }
+  },
+  {
+    "slug": "biggest-technical-mistake",
+    "type": "BEHAVIOURAL",
+    "title": "A decision you would reverse",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "failure",
+      "learning"
+    ],
+    "companies": [],
+    "bodyMd": "What is a technical decision you made that you would now reverse? Why did it seem right at the time?",
+    "behavioural": {
+      "competency": "Judgement and reflection",
+      "leadershipPrinciple": null,
+      "whatGoodLooksLike": "A strong answer explains the original context fairly — the constraints and information at the time — so the decision does not look careless. The candidate then explains what changed or what they missed (scale, team size, operational cost), how the consequences showed up, and what they did about it (migration, mitigation). The best answers extract a reusable principle about decision making, such as identifying one-way doors or writing down assumptions to revisit. Defensiveness or a trivial example are red flags.",
+      "followUpProbes": [
+        "What information would have changed your decision at the time?",
+        "What did the mistake cost?",
+        "Have you reversed it, and how?",
+        "How do you make similar decisions today?"
+      ],
+      "expectedPoints": [
+        "Fair account of original context",
+        "Clear understanding of what went wrong",
+        "Actions taken to correct it",
+        "Reusable decision-making lesson"
+      ]
+    }
+  },
+  {
+    "slug": "amazon-lp-customer-obsession",
+    "type": "BEHAVIOURAL",
+    "title": "Working backwards from the customer",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "customer-focus",
+      "ownership"
+    ],
+    "companies": [
+      "amazon"
+    ],
+    "bodyMd": "Tell me about a time you went beyond what was asked because you understood what the customer actually needed.",
+    "behavioural": {
+      "competency": "Customer focus",
+      "leadershipPrinciple": "Customer Obsession",
+      "whatGoodLooksLike": "Amazon expects the story to start with the **customer**, not the technology. A strong answer identifies a specific customer (external or internal) and their pain, shows how the candidate learned about it (data, anecdotes, direct contact), and describes action that went beyond the original task — even when it was inconvenient or not their job. The result is measured in customer terms (fewer contacts, faster delivery, higher retention). Bonus: balancing customer need against a short-term business cost and choosing the long-term trust.",
+      "followUpProbes": [
+        "How did you know this was what the customer needed?",
+        "What did it cost you or the team to do this?",
+        "What metric showed the customer benefited?",
+        "Was there a point where you had to say no to a customer request?"
+      ],
+      "expectedPoints": [
+        "Specific customer and pain point",
+        "Evidence-driven understanding of the need",
+        "Action beyond the assigned scope",
+        "Customer-centred metrics in the result",
+        "Trade-off between short-term cost and customer trust"
+      ]
+    }
+  },
+  {
+    "slug": "amazon-lp-ownership",
+    "type": "BEHAVIOURAL",
+    "title": "Owning something outside your remit",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "ownership",
+      "leadership"
+    ],
+    "companies": [
+      "amazon"
+    ],
+    "bodyMd": "Tell me about a time you took on a problem that was outside your area of responsibility because no one else was fixing it.",
+    "behavioural": {
+      "competency": "Ownership",
+      "leadershipPrinciple": "Ownership",
+      "whatGoodLooksLike": "Interviewers look for someone who acts on behalf of the whole company and never says 'that's not my job'. A strong answer describes a problem that sat between teams or was neglected, why it mattered long term, and how the candidate stepped in — while still being respectful of the actual owners. They followed it through to completion rather than raising it and walking away, and made sure the fix was sustainable (handed over, documented, monitored). The result shows lasting impact.",
+      "followUpProbes": [
+        "Why had no one fixed it before?",
+        "How did you balance this against your own commitments?",
+        "How did the official owners react?",
+        "What happens to it now?"
+      ],
+      "expectedPoints": [
+        "Noticed a neglected problem with long-term impact",
+        "Took action without being asked",
+        "Respected existing owners and communicated",
+        "Saw it through to completion",
+        "Made the fix sustainable"
+      ]
+    }
+  },
+  {
+    "slug": "amazon-lp-invent-and-simplify",
+    "type": "BEHAVIOURAL",
+    "title": "Simplifying a complex process",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "ownership",
+      "learning"
+    ],
+    "companies": [
+      "amazon"
+    ],
+    "bodyMd": "Tell me about a time you found a much simpler way to do something your team was doing in a complicated way.",
+    "behavioural": {
+      "competency": "Innovation and simplification",
+      "leadershipPrinciple": "Invent and Simplify",
+      "whatGoodLooksLike": "Strong answers show the candidate questioned an accepted, complex way of working — a manual release process, a convoluted service, a heavy framework — and invented or borrowed a simpler approach. They explain how they validated the idea (prototype, small trial), how they handled scepticism, and what was removed rather than added. The result is quantified: time saved, fewer failures, fewer components. Showing willingness to look externally for ideas and being comfortable being misunderstood for a while are positives.",
+      "followUpProbes": [
+        "What made the old approach complicated?",
+        "Where did your idea come from?",
+        "Who doubted it, and how did you convince them?",
+        "What did you remove as a result?"
+      ],
+      "expectedPoints": [
+        "Challenged an accepted complex process",
+        "Original or borrowed simplification",
+        "Validated with a prototype or pilot",
+        "Handled scepticism",
+        "Quantified simplification outcome"
+      ]
+    }
+  },
+  {
+    "slug": "amazon-lp-are-right-a-lot",
+    "type": "BEHAVIOURAL",
+    "title": "Making a call with incomplete information",
+    "difficulty": "HARD",
+    "tags": [
+      "ambiguity",
+      "ownership"
+    ],
+    "companies": [
+      "amazon"
+    ],
+    "bodyMd": "Tell me about a time you had to make an important decision without all the data you wanted. How did you decide, and were you right?",
+    "behavioural": {
+      "competency": "Judgement",
+      "leadershipPrinciple": "Are Right, A Lot",
+      "whatGoodLooksLike": "This principle is about strong judgement and good instincts, combined with seeking diverse perspectives and working to disconfirm one's own beliefs. A strong answer shows how the candidate framed the decision, what data they did have, which perspectives they sought (especially dissenting ones), and how they weighed the risk of being wrong — e.g. treating it as a reversible two-way door. They state the outcome honestly, including if they were partly wrong, and what signals they set up to detect a wrong call early.",
+      "followUpProbes": [
+        "What data were you missing, and why couldn't you wait for it?",
+        "Whose opinion challenged yours?",
+        "How would you have known early if you were wrong?",
+        "What was the actual outcome?"
+      ],
+      "expectedPoints": [
+        "Clear framing of the decision and its reversibility",
+        "Used available data and diverse perspectives",
+        "Actively looked for disconfirming evidence",
+        "Honest assessment of the outcome",
+        "Set up early signals or checkpoints"
+      ]
+    }
+  },
+  {
+    "slug": "amazon-lp-learn-and-be-curious",
+    "type": "BEHAVIOURAL",
+    "title": "Learning outside your comfort zone",
+    "difficulty": "EASY",
+    "tags": [
+      "learning"
+    ],
+    "companies": [
+      "amazon"
+    ],
+    "bodyMd": "Tell me about something you learned recently that was outside your core area, and how you applied it.",
+    "behavioural": {
+      "competency": "Curiosity and continuous learning",
+      "leadershipPrinciple": "Learn and Be Curious",
+      "whatGoodLooksLike": "A strong answer shows genuine curiosity — the candidate pursued a topic because they wanted to understand it, not only because a ticket required it. They explain how they learned (reading source code, papers, experiments, mentors) and, importantly, how the learning was **applied** to create value for their team or product. Good answers show a pattern of curiosity rather than a one-off and include what they are exploring now. Specific details, such as a surprising insight or a corrected misconception, signal real depth rather than surface reading.",
+      "followUpProbes": [
+        "What made you curious about it?",
+        "How did you go about learning it?",
+        "How did it change your work?",
+        "What are you learning right now?"
+      ],
+      "expectedPoints": [
+        "Genuine curiosity beyond immediate need",
+        "Effective learning methods",
+        "Application that created value",
+        "Evidence of an ongoing habit"
+      ]
+    }
+  },
+  {
+    "slug": "amazon-lp-dive-deep",
+    "type": "BEHAVIOURAL",
+    "title": "Digging into a hard problem",
+    "difficulty": "HARD",
+    "tags": [
+      "ownership",
+      "customer-focus"
+    ],
+    "companies": [
+      "amazon"
+    ],
+    "bodyMd": "Tell me about a time a metric or report looked fine on the surface, but you dug deeper and found a real problem.",
+    "behavioural": {
+      "competency": "Analytical depth",
+      "leadershipPrinciple": "Dive Deep",
+      "whatGoodLooksLike": "Amazon wants leaders who operate at all levels, stay connected to the details and are sceptical when metrics and anecdotes differ. A strong answer shows the candidate noticed an anomaly or a mismatch between data and customer experience, dug through logs, queries or code personally, and found a root cause others had missed. They explain the specific steps and tools used, how they verified their hypothesis, and the impact of the fix. Precise numbers and technical detail are expected.",
+      "followUpProbes": [
+        "What first made you suspicious?",
+        "Walk me through exactly how you investigated it.",
+        "What hypothesis did you rule out along the way?",
+        "Why had others missed it?"
+      ],
+      "expectedPoints": [
+        "Noticed an anomaly or data/anecdote mismatch",
+        "Personally investigated with concrete tools and steps",
+        "Verified the root cause, ruled out alternatives",
+        "Quantified impact of the finding and fix",
+        "Mechanism to catch similar issues"
+      ]
+    }
+  },
+  {
+    "slug": "amazon-lp-backbone-disagree-commit",
+    "type": "BEHAVIOURAL",
+    "title": "Disagreeing, then committing",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "conflict",
+      "influence"
+    ],
+    "companies": [
+      "amazon"
+    ],
+    "bodyMd": "Tell me about a time you disagreed with your manager or team on an important decision. How did you voice it, and what did you do once the decision was made?",
+    "behavioural": {
+      "competency": "Courage and commitment",
+      "leadershipPrinciple": "Have Backbone; Disagree and Commit",
+      "whatGoodLooksLike": "Strong answers show both halves. **Backbone**: the candidate challenged a decision respectfully and with data, even when it was uncomfortable or socially costly, rather than staying quiet for the sake of harmony. **Commit**: once the decision was made — whether or not it went their way — they committed fully and helped it succeed, without passive resistance or 'I told you so'. The result covers what happened and what they learned about raising disagreement effectively.",
+      "followUpProbes": [
+        "How did you raise the disagreement, and with whom?",
+        "What data did you bring?",
+        "If you were overruled, how did you show commitment?",
+        "Would you do anything differently?"
+      ],
+      "expectedPoints": [
+        "Respectful but firm challenge with evidence",
+        "Did not compromise just for social cohesion",
+        "Full commitment once decided",
+        "No passive resistance",
+        "Reflection on the outcome"
+      ]
+    }
+  },
+  {
+    "slug": "amazon-lp-deliver-results",
+    "type": "BEHAVIOURAL",
+    "title": "Delivering despite setbacks",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "ownership",
+      "prioritisation"
+    ],
+    "companies": [
+      "amazon"
+    ],
+    "bodyMd": "Tell me about a time you delivered an important result despite a significant obstacle or setback.",
+    "behavioural": {
+      "competency": "Execution and results",
+      "leadershipPrinciple": "Deliver Results",
+      "whatGoodLooksLike": "Interviewers look for focus on the key inputs, delivering with the right quality and on time, and not settling when setbacks hit. A strong answer sets out the goal and why it mattered, the specific obstacle (lost team member, failed dependency, technical dead end), and the decisive actions taken to get back on track: reprioritising, finding a creative workaround, rallying help. The result is concrete and quantified, and the candidate is honest about anything that was traded off.",
+      "followUpProbes": [
+        "What was the obstacle, and when did you realise it threatened the goal?",
+        "What options did you consider?",
+        "What did you trade off to deliver?",
+        "What was the measurable outcome?"
+      ],
+      "expectedPoints": [
+        "Clear goal and stakes",
+        "Specific, significant obstacle",
+        "Decisive actions to recover",
+        "Honest about trade-offs",
+        "Quantified delivered result"
+      ]
+    }
+  }
+]

@@ -1,0 +1,78 @@
+[
+  {
+    "angle": "TRADEOFFS",
+    "question": "Pick the project you are proudest of. What was the hardest technical trade-off you made, and what did you give up?",
+    "expectedSignals": [
+      "Names concrete alternatives that were considered",
+      "Explains the decision criteria (performance, cost, time, team skills)",
+      "Acknowledges the downside that was accepted",
+      "Reflects on whether the trade-off held up"
+    ]
+  },
+  {
+    "angle": "TRADEOFFS",
+    "question": "In one of your projects, why did you choose the database and overall architecture you did? What would make you choose differently?",
+    "expectedSignals": [
+      "Ties choices to access patterns and data shape",
+      "Compares at least one realistic alternative",
+      "Identifies the conditions under which the choice would change"
+    ]
+  },
+  {
+    "angle": "SCALING",
+    "question": "Imagine one of your projects suddenly has 100 times more users. What breaks first, and how would you fix it?",
+    "expectedSignals": [
+      "Identifies the first realistic bottleneck rather than listing buzzwords",
+      "Proposes measurement before optimisation",
+      "Suggests targeted fixes such as caching, indexing, queues or horizontal scaling",
+      "Mentions the cost or complexity of each fix"
+    ]
+  },
+  {
+    "angle": "FAILURES",
+    "question": "Tell me about the worst bug you hit in one of your projects. How did you find the root cause?",
+    "expectedSignals": [
+      "Describes a systematic debugging approach (reproduce, isolate, hypothesise)",
+      "Uses concrete tools such as logs, debugger or profiler",
+      "Explains the actual root cause, not just the symptom",
+      "Mentions what was done to prevent recurrence"
+    ]
+  },
+  {
+    "angle": "FAILURES",
+    "question": "What would you build differently if you started your main project again today, and why?",
+    "expectedSignals": [
+      "Honest critique of their own design",
+      "Explains what they learned that changed their view",
+      "Prioritises the changes that matter most"
+    ]
+  },
+  {
+    "angle": "OWNERSHIP",
+    "question": "Which part of your project did you personally design and build end to end? Walk me through a key decision in that part.",
+    "expectedSignals": [
+      "Clearly separates personal contribution from team work",
+      "Explains a decision in technical depth",
+      "Shows ownership of the outcome, including follow-up after launch"
+    ]
+  },
+  {
+    "angle": "OWNERSHIP",
+    "question": "Did anyone other than you use your project? What did you change based on their feedback?",
+    "expectedSignals": [
+      "Mentions real users or reviewers and how feedback was gathered",
+      "Describes a concrete change driven by feedback",
+      "Shows prioritisation of feedback rather than doing everything"
+    ]
+  },
+  {
+    "angle": "TESTING",
+    "question": "How did you know your project actually worked? Describe your testing approach and one bug your tests caught.",
+    "expectedSignals": [
+      "Describes a mix of test levels (unit, integration, end-to-end) with reasons",
+      "Explains what was deliberately not tested and why",
+      "Gives a concrete example of a bug caught by tests",
+      "Mentions automation such as CI"
+    ]
+  }
+]

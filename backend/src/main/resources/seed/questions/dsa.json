@@ -1,0 +1,4140 @@
+[
+  {
+    "slug": "two-sum-indices",
+    "type": "DSA",
+    "title": "Pair With Target Sum",
+    "difficulty": "EASY",
+    "tags": [
+      "arrays",
+      "hash-map"
+    ],
+    "companies": [
+      "amazon",
+      "google",
+      "adobe"
+    ],
+    "bodyMd": "You are given an integer array `nums` and an integer `target`. Exactly one pair of **distinct positions** `i < j` satisfies `nums[i] + nums[j] == target`.\n\nReturn that pair as `[i, j]` with the smaller index first. The same position may not be used twice, although two different positions may hold equal values.\n\n**Example 1**\n\n```\nInput: nums = [2, 7, 11, 15], target = 9\nOutput: [0, 1]\n```\n\n_Explanation:_ nums[0] + nums[1] = 2 + 7 = 9.\n\n**Example 2**\n\n```\nInput: nums = [3, 2, 4], target = 6\nOutput: [1, 2]\n```\n\n_Explanation:_ 2 + 4 = 6. Index 0 cannot be paired with itself.\n\n**Constraints**\n\n- 2 <= nums.length <= 10^4\n- -10^9 <= nums[i] <= 10^9\n- -10^9 <= target <= 10^9\n- Exactly one valid pair exists.",
+    "dsa": {
+      "functionName": "twoSum",
+      "params": [
+        {
+          "name": "nums",
+          "type": "int[]"
+        },
+        {
+          "name": "target",
+          "type": "int"
+        }
+      ],
+      "returnType": "int[]",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(n)",
+      "expectedSpaceComplexity": "O(n)",
+      "testCases": [
+        {
+          "input": [
+            [
+              2,
+              7,
+              11,
+              15
+            ],
+            9
+          ],
+          "expected": [
+            0,
+            1
+          ],
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              3,
+              2,
+              4
+            ],
+            6
+          ],
+          "expected": [
+            1,
+            2
+          ],
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              3,
+              3
+            ],
+            6
+          ],
+          "expected": [
+            0,
+            1
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              -1,
+              -2,
+              -3,
+              -4,
+              -5
+            ],
+            -8
+          ],
+          "expected": [
+            2,
+            4
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              0,
+              4,
+              3,
+              0
+            ],
+            0
+          ],
+          "expected": [
+            0,
+            3
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              1000000000,
+              -1000000000,
+              5
+            ],
+            0
+          ],
+          "expected": [
+            0,
+            1
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              1,
+              5,
+              9,
+              13,
+              2
+            ],
+            15
+          ],
+          "expected": [
+            3,
+            4
+          ],
+          "sample": false
+        }
+      ],
+      "hints": [
+        "For each number you visit, which other value would complete the sum? How quickly can you check whether you have already seen it?",
+        "Use a hash map from value to index. While scanning left to right, look up target - nums[j] before inserting nums[j]; a hit gives the earlier index i, so the pair comes out ordered and never reuses a position.",
+        "seen = empty map\nfor j, x in enumerate(nums):\n    need = target - x\n    if need in seen: return [seen[need], j]\n    seen[x] = j"
+      ],
+      "expectedPoints": [
+        "Brute force checks all pairs in O(n^2); a hash map of value -> index reduces it to a single O(n) pass.",
+        "Looks up the complement before inserting the current element so an element is never paired with itself.",
+        "Handles duplicate values (e.g. [3, 3] with target 6) correctly.",
+        "States O(n) time and O(n) extra space; mentions the sort + two-pointer alternative loses original indices unless they are carried along."
+      ],
+      "referenceSolutionPython": "def twoSum(nums, target):\n    seen = {}\n    for j, x in enumerate(nums):\n        need = target - x\n        if need in seen:\n            return [seen[need], j]\n        seen[x] = j\n    return []\n"
+    }
+  },
+  {
+    "slug": "valid-bracket-sequence",
+    "type": "DSA",
+    "title": "Balanced Bracket String",
+    "difficulty": "EASY",
+    "tags": [
+      "stack",
+      "strings"
+    ],
+    "companies": [
+      "google",
+      "microsoft",
+      "razorpay"
+    ],
+    "bodyMd": "A string `s` contains only the characters `(`, `)`, `[`, `]`, `{` and `}`.\n\nReturn `true` if the brackets are **balanced**: every opening bracket is closed by a bracket of the same kind, and brackets close in the reverse order in which they were opened. The empty string is balanced.\n\n**Example 1**\n\n```\nInput: s = \"()[]{}\"\nOutput: true\n```\n\n_Explanation:_ Each pair opens and closes immediately.\n\n**Example 2**\n\n```\nInput: s = \"([)]\"\nOutput: false\n```\n\n_Explanation:_ `[` is opened after `(`, so it must be closed before `)`.\n\n**Constraints**\n\n- 0 <= s.length <= 10^4\n- s consists only of the six bracket characters.",
+    "dsa": {
+      "functionName": "isValid",
+      "params": [
+        {
+          "name": "s",
+          "type": "string"
+        }
+      ],
+      "returnType": "boolean",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(n)",
+      "expectedSpaceComplexity": "O(n)",
+      "testCases": [
+        {
+          "input": [
+            "()[]{}"
+          ],
+          "expected": true,
+          "sample": true
+        },
+        {
+          "input": [
+            "([)]"
+          ],
+          "expected": false,
+          "sample": true
+        },
+        {
+          "input": [
+            ""
+          ],
+          "expected": true,
+          "sample": false
+        },
+        {
+          "input": [
+            "((("
+          ],
+          "expected": false,
+          "sample": false
+        },
+        {
+          "input": [
+            "{[()()]}"
+          ],
+          "expected": true,
+          "sample": false
+        },
+        {
+          "input": [
+            "]"
+          ],
+          "expected": false,
+          "sample": false
+        },
+        {
+          "input": [
+            "(]"
+          ],
+          "expected": false,
+          "sample": false
+        }
+      ],
+      "hints": [
+        "When you see a closing bracket, which opening bracket must it match? Where would that bracket be in what you have read so far?",
+        "A stack fits because the most recently opened unmatched bracket must be closed first (last-in, first-out). Push openers; on a closer, the top of the stack must be the matching opener.",
+        "stack = []\nfor ch in s:\n    if ch is an opener: push ch\n    else if stack empty or top != match[ch]: return false\n    else pop\nreturn stack is empty"
+      ],
+      "expectedPoints": [
+        "Uses a stack and a closer -> opener mapping.",
+        "Rejects a closer when the stack is empty (e.g. \"]\").",
+        "Checks the stack is empty at the end (e.g. \"(((\").",
+        "Early exit on odd length is a valid optimisation.",
+        "O(n) time and O(n) space in the worst case."
+      ],
+      "referenceSolutionPython": "def isValid(s):\n    pairs = {')': '(', ']': '[', '}': '{'}\n    stack = []\n    for ch in s:\n        if ch in pairs:\n            if not stack or stack[-1] != pairs[ch]:\n                return False\n            stack.pop()\n        else:\n            stack.append(ch)\n    return not stack\n"
+    }
+  },
+  {
+    "slug": "single-trade-max-profit",
+    "type": "DSA",
+    "title": "Best Single Stock Trade",
+    "difficulty": "EASY",
+    "tags": [
+      "arrays",
+      "greedy"
+    ],
+    "companies": [
+      "amazon",
+      "goldman-sachs",
+      "walmart-global-tech"
+    ],
+    "bodyMd": "`prices[i]` is the price of a stock on day `i`. You may buy one share on some day and sell it on a **strictly later** day, at most once.\n\nReturn the maximum profit you can make. If no profitable trade exists, return `0`.\n\n**Example 1**\n\n```\nInput: prices = [7, 1, 5, 3, 6, 4]\nOutput: 5\n```\n\n_Explanation:_ Buy on day 1 at price 1 and sell on day 4 at price 6.\n\n**Example 2**\n\n```\nInput: prices = [7, 6, 4, 3, 1]\nOutput: 0\n```\n\n_Explanation:_ Prices only fall, so the best choice is not to trade.\n\n**Constraints**\n\n- 1 <= prices.length <= 10^5\n- 0 <= prices[i] <= 10^4",
+    "dsa": {
+      "functionName": "maxProfit",
+      "params": [
+        {
+          "name": "prices",
+          "type": "int[]"
+        }
+      ],
+      "returnType": "int",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(n)",
+      "expectedSpaceComplexity": "O(1)",
+      "testCases": [
+        {
+          "input": [
+            [
+              7,
+              1,
+              5,
+              3,
+              6,
+              4
+            ]
+          ],
+          "expected": 5,
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              7,
+              6,
+              4,
+              3,
+              1
+            ]
+          ],
+          "expected": 0,
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              5
+            ]
+          ],
+          "expected": 0,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              2,
+              4,
+              1
+            ]
+          ],
+          "expected": 2,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              3,
+              3,
+              3
+            ]
+          ],
+          "expected": 0,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              1,
+              2,
+              4,
+              2,
+              5,
+              7,
+              2,
+              4,
+              9,
+              0
+            ]
+          ],
+          "expected": 8,
+          "sample": false
+        }
+      ],
+      "hints": [
+        "If you had to sell today, what is the best day you could have bought on?",
+        "Greedy single pass: keep the minimum price seen so far. Selling today yields price - minSoFar; the answer is the best of these. No need to compare every pair.",
+        "best = 0; low = prices[0]\nfor p in prices:\n    low = min(low, p)\n    best = max(best, p - low)\nreturn best"
+      ],
+      "expectedPoints": [
+        "Tracks running minimum and best profit in one pass.",
+        "Returns 0 rather than a negative number when prices only fall.",
+        "Handles a single-day input.",
+        "O(n) time, O(1) space; contrasts with the O(n^2) brute force."
+      ],
+      "referenceSolutionPython": "def maxProfit(prices):\n    low = prices[0]\n    best = 0\n    for p in prices:\n        if p < low:\n            low = p\n        elif p - low > best:\n            best = p - low\n    return best\n"
+    }
+  },
+  {
+    "slug": "merge-two-sorted-arrays",
+    "type": "DSA",
+    "title": "Merge Two Sorted Arrays",
+    "difficulty": "EASY",
+    "tags": [
+      "arrays",
+      "two-pointers",
+      "sorting"
+    ],
+    "companies": [
+      "microsoft",
+      "oracle"
+    ],
+    "bodyMd": "Given two integer arrays `a` and `b`, each sorted in non-decreasing order, return a single array containing all elements of both, also sorted in non-decreasing order.\n\nAim for linear time; do not concatenate and re-sort.\n\n**Example 1**\n\n```\nInput: a = [1, 3, 5], b = [2, 4, 6]\nOutput: [1, 2, 3, 4, 5, 6]\n```\n\n**Example 2**\n\n```\nInput: a = [], b = [1, 2]\nOutput: [1, 2]\n```\n\n_Explanation:_ One input may be empty.\n\n**Constraints**\n\n- 0 <= a.length, b.length <= 10^4\n- -10^9 <= a[i], b[i] <= 10^9\n- Both arrays are sorted in non-decreasing order.",
+    "dsa": {
+      "functionName": "mergeSorted",
+      "params": [
+        {
+          "name": "a",
+          "type": "int[]"
+        },
+        {
+          "name": "b",
+          "type": "int[]"
+        }
+      ],
+      "returnType": "int[]",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(n + m)",
+      "expectedSpaceComplexity": "O(n + m)",
+      "testCases": [
+        {
+          "input": [
+            [
+              1,
+              3,
+              5
+            ],
+            [
+              2,
+              4,
+              6
+            ]
+          ],
+          "expected": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "sample": true
+        },
+        {
+          "input": [
+            [],
+            [
+              1,
+              2
+            ]
+          ],
+          "expected": [
+            1,
+            2
+          ],
+          "sample": true
+        },
+        {
+          "input": [
+            [],
+            []
+          ],
+          "expected": [],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              -5,
+              0,
+              0
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "expected": [
+            -5,
+            0,
+            0,
+            0,
+            3
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              1
+            ]
+          ],
+          "expected": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              10
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "expected": [
+            1,
+            2,
+            3,
+            10
+          ],
+          "sample": false
+        }
+      ],
+      "hints": [
+        "The smallest remaining element overall must be at the front of one of the two arrays. Which one?",
+        "Two pointers: one index per array. Repeatedly take the smaller front element and advance that pointer. When one array is exhausted, append the rest of the other.",
+        "i = j = 0; out = []\nwhile i < len(a) and j < len(b):\n    take the smaller of a[i], b[j]; advance its index\nappend a[i:] and b[j:]\nreturn out"
+      ],
+      "expectedPoints": [
+        "Two-pointer merge in O(n + m) time.",
+        "Appends the leftover tail after one array runs out.",
+        "Handles empty inputs and duplicates (using <= keeps the merge stable).",
+        "Mentions the in-place variant (fill from the back when a has spare capacity)."
+      ],
+      "referenceSolutionPython": "def mergeSorted(a, b):\n    i = j = 0\n    out = []\n    while i < len(a) and j < len(b):\n        if a[i] <= b[j]:\n            out.append(a[i]); i += 1\n        else:\n            out.append(b[j]); j += 1\n    out.extend(a[i:])\n    out.extend(b[j:])\n    return out\n"
+    }
+  },
+  {
+    "slug": "search-insert-position",
+    "type": "DSA",
+    "title": "Insert Position in Sorted Array",
+    "difficulty": "EASY",
+    "tags": [
+      "binary-search",
+      "arrays"
+    ],
+    "companies": [
+      "google",
+      "salesforce"
+    ],
+    "bodyMd": "`nums` is sorted in strictly increasing order (all values distinct). Return the index of `target` if it is present; otherwise return the index at which it would have to be inserted to keep the array sorted.\n\nYour solution must run in `O(log n)` time.\n\n**Example 1**\n\n```\nInput: nums = [1, 3, 5, 6], target = 5\nOutput: 2\n```\n\n_Explanation:_ 5 is found at index 2.\n\n**Example 2**\n\n```\nInput: nums = [1, 3, 5, 6], target = 2\nOutput: 1\n```\n\n_Explanation:_ 2 would go between 1 and 3.\n\n**Constraints**\n\n- 0 <= nums.length <= 10^4\n- -10^4 <= nums[i], target <= 10^4\n- nums is strictly increasing.",
+    "dsa": {
+      "functionName": "searchInsert",
+      "params": [
+        {
+          "name": "nums",
+          "type": "int[]"
+        },
+        {
+          "name": "target",
+          "type": "int"
+        }
+      ],
+      "returnType": "int",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(log n)",
+      "expectedSpaceComplexity": "O(1)",
+      "testCases": [
+        {
+          "input": [
+            [
+              1,
+              3,
+              5,
+              6
+            ],
+            5
+          ],
+          "expected": 2,
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              1,
+              3,
+              5,
+              6
+            ],
+            2
+          ],
+          "expected": 1,
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              1,
+              3,
+              5,
+              6
+            ],
+            7
+          ],
+          "expected": 4,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              1,
+              3,
+              5,
+              6
+            ],
+            0
+          ],
+          "expected": 0,
+          "sample": false
+        },
+        {
+          "input": [
+            [],
+            4
+          ],
+          "expected": 0,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              -10,
+              -3,
+              0,
+              9
+            ],
+            -3
+          ],
+          "expected": 1,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              2
+            ],
+            2
+          ],
+          "expected": 0,
+          "sample": false
+        }
+      ],
+      "hints": [
+        "Both answers (found / insert here) are the same thing: the first index whose value is at least target.",
+        "Binary search for the lower bound. Keep a half-open range [lo, hi) where hi starts at len(nums); shrink toward the first element >= target. This handles 'past the end' and empty arrays naturally.",
+        "lo, hi = 0, len(nums)\nwhile lo < hi:\n    mid = (lo + hi) // 2\n    if nums[mid] < target: lo = mid + 1\n    else: hi = mid\nreturn lo"
+      ],
+      "expectedPoints": [
+        "Recognises this as lower_bound (first index with nums[i] >= target).",
+        "Uses a consistent loop invariant (half-open [lo, hi)) to avoid off-by-one errors.",
+        "Handles target smaller than all, larger than all, and an empty array.",
+        "O(log n) time, O(1) space; notes mid computation overflow in fixed-width languages."
+      ],
+      "referenceSolutionPython": "def searchInsert(nums, target):\n    lo, hi = 0, len(nums)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid\n    return lo\n"
+    }
+  },
+  {
+    "slug": "anagram-check",
+    "type": "DSA",
+    "title": "Same Letters, Different Order",
+    "difficulty": "EASY",
+    "tags": [
+      "strings",
+      "hash-map"
+    ],
+    "companies": [
+      "meesho",
+      "zomato"
+    ],
+    "bodyMd": "Given two strings `s` and `t` of lowercase English letters, return `true` if `t` is an **anagram** of `s` — that is, `t` uses exactly the same letters as `s`, each the same number of times, possibly in a different order.\n\n**Example 1**\n\n```\nInput: s = \"listen\", t = \"silent\"\nOutput: true\n```\n\n**Example 2**\n\n```\nInput: s = \"rat\", t = \"car\"\nOutput: false\n```\n\n_Explanation:_ `t` has a `c` where `s` has a `t`.\n\n**Constraints**\n\n- 0 <= s.length, t.length <= 5 * 10^4\n- s and t contain only lowercase English letters.",
+    "dsa": {
+      "functionName": "isAnagram",
+      "params": [
+        {
+          "name": "s",
+          "type": "string"
+        },
+        {
+          "name": "t",
+          "type": "string"
+        }
+      ],
+      "returnType": "boolean",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(n)",
+      "expectedSpaceComplexity": "O(1)",
+      "testCases": [
+        {
+          "input": [
+            "listen",
+            "silent"
+          ],
+          "expected": true,
+          "sample": true
+        },
+        {
+          "input": [
+            "rat",
+            "car"
+          ],
+          "expected": false,
+          "sample": true
+        },
+        {
+          "input": [
+            "",
+            ""
+          ],
+          "expected": true,
+          "sample": false
+        },
+        {
+          "input": [
+            "a",
+            "ab"
+          ],
+          "expected": false,
+          "sample": false
+        },
+        {
+          "input": [
+            "aabbcc",
+            "abcabc"
+          ],
+          "expected": true,
+          "sample": false
+        },
+        {
+          "input": [
+            "aab",
+            "abb"
+          ],
+          "expected": false,
+          "sample": false
+        }
+      ],
+      "hints": [
+        "What has to be identical between two strings that are rearrangements of each other?",
+        "Compare letter frequencies. With a fixed 26-letter alphabet, a single count array incremented for s and decremented for t is enough; every slot must end at zero.",
+        "if len(s) != len(t): return false\ncount = [0] * 26\nfor each index i: count[s[i]] += 1; count[t[i]] -= 1\nreturn all counts are zero"
+      ],
+      "expectedPoints": [
+        "Early exit when lengths differ.",
+        "Frequency counting in O(n) instead of sorting in O(n log n).",
+        "O(1) extra space for a fixed alphabet; a hash map generalises to Unicode.",
+        "Handles empty strings and repeated letters."
+      ],
+      "referenceSolutionPython": "def isAnagram(s, t):\n    if len(s) != len(t):\n        return False\n    count = [0] * 26\n    for a, b in zip(s, t):\n        count[ord(a) - 97] += 1\n        count[ord(b) - 97] -= 1\n    return all(c == 0 for c in count)\n"
+    }
+  },
+  {
+    "slug": "binary-tree-max-depth",
+    "type": "DSA",
+    "title": "Depth of a Level-Order Tree",
+    "difficulty": "EASY",
+    "tags": [
+      "trees-as-arrays",
+      "bfs"
+    ],
+    "companies": [
+      "amazon",
+      "microsoft"
+    ],
+    "bodyMd": "A binary tree is given as a level-order array `tree`, where `-1` marks a missing child. Children are listed only for nodes that exist (the same format many judges use): the root is `tree[0]`, then the left and right child of each existing node in the order those nodes appear. Trailing missing children may be omitted.\n\nReturn the **maximum depth** of the tree: the number of nodes on the longest path from the root down to a leaf. An empty array is an empty tree with depth `0`.\n\n**Example 1**\n\n```\nInput: tree = [3, 9, 20, -1, -1, 15, 7]\nOutput: 3\n```\n\n_Explanation:_ Root 3 has children 9 and 20; 20 has children 15 and 7. The path 3 -> 20 -> 15 has 3 nodes.\n\n**Example 2**\n\n```\nInput: tree = [1, -1, 2]\nOutput: 2\n```\n\n_Explanation:_ Root 1 has only a right child 2.\n\n**Constraints**\n\n- 0 <= tree.length <= 10^4\n- Node values are in the range [0, 10^4]; -1 is reserved for a missing node.\n- If tree is non-empty, tree[0] != -1.",
+    "dsa": {
+      "functionName": "maxDepth",
+      "params": [
+        {
+          "name": "tree",
+          "type": "int[]"
+        }
+      ],
+      "returnType": "int",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(n)",
+      "expectedSpaceComplexity": "O(n)",
+      "testCases": [
+        {
+          "input": [
+            [
+              3,
+              9,
+              20,
+              -1,
+              -1,
+              15,
+              7
+            ]
+          ],
+          "expected": 3,
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              1,
+              -1,
+              2
+            ]
+          ],
+          "expected": 2,
+          "sample": true
+        },
+        {
+          "input": [
+            []
+          ],
+          "expected": 0,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              1
+            ]
+          ],
+          "expected": 1,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              1,
+              2,
+              -1,
+              3,
+              -1,
+              4
+            ]
+          ],
+          "expected": 4,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ]
+          ],
+          "expected": 3,
+          "sample": false
+        }
+      ],
+      "hints": [
+        "You do not need to build node objects. Can you walk the array level by level and count how many levels contain at least one real node?",
+        "Simulate a breadth-first traversal over the array: keep a queue of existing nodes for the current level and a read pointer into the array that hands out two child slots per existing node. Each non-empty level adds one to the depth.",
+        "if tree empty: return 0\nlevel = 1 node (the root); pos = 1; depth = 0\nwhile level has nodes:\n    depth += 1; next = 0\n    for each node in level: read 2 slots at pos (if in range); count non -1 slots into next; pos += 2\n    level = next\nreturn depth"
+      ],
+      "expectedPoints": [
+        "Understands the serialisation: only existing nodes contribute child slots.",
+        "Uses BFS level counting (or reconstructs the tree and recurses) — both are O(n).",
+        "Handles empty input and skewed trees.",
+        "O(n) time; O(width) or O(n) space; notes recursion depth risk on a degenerate tree."
+      ],
+      "referenceSolutionPython": "def maxDepth(tree):\n    if not tree:\n        return 0\n    depth = 0\n    level = 1\n    pos = 1\n    n = len(tree)\n    while level > 0:\n        depth += 1\n        nxt = 0\n        for _ in range(level):\n            for _ in range(2):\n                if pos < n:\n                    if tree[pos] != -1:\n                        nxt += 1\n                    pos += 1\n        level = nxt\n    return depth\n"
+    }
+  },
+  {
+    "slug": "count-set-bits-range",
+    "type": "DSA",
+    "title": "Set Bits for Every Number",
+    "difficulty": "EASY",
+    "tags": [
+      "bit-manipulation",
+      "dynamic-programming"
+    ],
+    "companies": [
+      "adobe",
+      "microsoft"
+    ],
+    "bodyMd": "Given a non-negative integer `n`, return an array `ans` of length `n + 1` where `ans[i]` is the number of `1` bits in the binary representation of `i`.\n\nCan you do it in a single `O(n)` pass without counting bits one at a time for each number?\n\n**Example 1**\n\n```\nInput: n = 2\nOutput: [0, 1, 1]\n```\n\n_Explanation:_ 0 -> 0, 1 -> 1, 2 -> 10.\n\n**Example 2**\n\n```\nInput: n = 5\nOutput: [0, 1, 1, 2, 1, 2]\n```\n\n_Explanation:_ 3 -> 11 and 5 -> 101 each have two set bits.\n\n**Constraints**\n\n- 0 <= n <= 10^5",
+    "dsa": {
+      "functionName": "countBits",
+      "params": [
+        {
+          "name": "n",
+          "type": "int"
+        }
+      ],
+      "returnType": "int[]",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(n)",
+      "expectedSpaceComplexity": "O(n)",
+      "testCases": [
+        {
+          "input": [
+            2
+          ],
+          "expected": [
+            0,
+            1,
+            1
+          ],
+          "sample": true
+        },
+        {
+          "input": [
+            5
+          ],
+          "expected": [
+            0,
+            1,
+            1,
+            2,
+            1,
+            2
+          ],
+          "sample": true
+        },
+        {
+          "input": [
+            0
+          ],
+          "expected": [
+            0
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            1
+          ],
+          "expected": [
+            0,
+            1
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            8
+          ],
+          "expected": [
+            0,
+            1,
+            1,
+            2,
+            1,
+            2,
+            2,
+            3,
+            1
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            16
+          ],
+          "expected": [
+            0,
+            1,
+            1,
+            2,
+            1,
+            2,
+            2,
+            3,
+            1,
+            2,
+            2,
+            3,
+            2,
+            3,
+            3,
+            4,
+            1
+          ],
+          "sample": false
+        }
+      ],
+      "hints": [
+        "How does the binary form of i relate to the binary form of i shifted right by one?",
+        "Dynamic programming over bits: i >> 1 drops the lowest bit, and you have already computed its answer. So ans[i] = ans[i >> 1] + (i & 1). Another option is ans[i] = ans[i & (i - 1)] + 1, which clears the lowest set bit.",
+        "ans = [0] * (n + 1)\nfor i from 1 to n:\n    ans[i] = ans[i >> 1] + (i & 1)\nreturn ans"
+      ],
+      "expectedPoints": [
+        "Derives a recurrence reusing previously computed answers.",
+        "Explains either i >> 1 or i & (i - 1) trick.",
+        "O(n) time, O(1) extra beyond the output.",
+        "Handles n = 0."
+      ],
+      "referenceSolutionPython": "def countBits(n):\n    ans = [0] * (n + 1)\n    for i in range(1, n + 1):\n        ans[i] = ans[i >> 1] + (i & 1)\n    return ans\n"
+    }
+  },
+  {
+    "slug": "assign-cookies-greedy",
+    "type": "DSA",
+    "title": "Feed the Most Children",
+    "difficulty": "EASY",
+    "tags": [
+      "greedy",
+      "sorting",
+      "two-pointers"
+    ],
+    "companies": [
+      "swiggy",
+      "flipkart"
+    ],
+    "bodyMd": "Each child `i` has a greed factor `greed[i]`: the minimum cookie size that will make them content. Each cookie `j` has size `sizes[j]`. A child can receive at most one cookie, and each cookie goes to at most one child.\n\nReturn the maximum number of children who can be made content.\n\n**Example 1**\n\n```\nInput: greed = [1, 2, 3], sizes = [1, 1]\nOutput: 1\n```\n\n_Explanation:_ Both cookies have size 1, so only the child with greed 1 can be satisfied.\n\n**Example 2**\n\n```\nInput: greed = [1, 2], sizes = [1, 2, 3]\nOutput: 2\n```\n\n_Explanation:_ Every child can be satisfied.\n\n**Constraints**\n\n- 1 <= greed.length <= 3 * 10^4\n- 0 <= sizes.length <= 3 * 10^4\n- 1 <= greed[i], sizes[j] <= 2^31 - 1",
+    "dsa": {
+      "functionName": "findContentChildren",
+      "params": [
+        {
+          "name": "greed",
+          "type": "int[]"
+        },
+        {
+          "name": "sizes",
+          "type": "int[]"
+        }
+      ],
+      "returnType": "int",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(n log n + m log m)",
+      "expectedSpaceComplexity": "O(n + m)",
+      "testCases": [
+        {
+          "input": [
+            [
+              1,
+              2,
+              3
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "expected": 1,
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "expected": 2,
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              1,
+              2,
+              3
+            ],
+            []
+          ],
+          "expected": 0,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              10,
+              9,
+              8,
+              7
+            ],
+            [
+              5,
+              6,
+              7,
+              8
+            ]
+          ],
+          "expected": 2,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1
+            ]
+          ],
+          "expected": 3,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              2,
+              3
+            ],
+            [
+              1,
+              1,
+              1,
+              4
+            ]
+          ],
+          "expected": 1,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              5,
+              1,
+              3
+            ],
+            [
+              3,
+              1,
+              2
+            ]
+          ],
+          "expected": 2,
+          "sample": false
+        }
+      ],
+      "hints": [
+        "Would you ever want to give a large cookie to a child who would be happy with a small one?",
+        "Greedy with sorting: sort both arrays, then give each cookie (smallest first) to the least greedy child it can satisfy. Using the smallest adequate cookie keeps larger cookies available for greedier children — an exchange argument shows this is optimal.",
+        "sort greed; sort sizes\nchild = 0\nfor s in sizes:\n    if child < len(greed) and s >= greed[child]: child += 1\nreturn child"
+      ],
+      "expectedPoints": [
+        "Sorts both arrays and matches with two pointers.",
+        "Justifies the greedy choice (exchange argument).",
+        "Handles no cookies and cookies too small for anyone.",
+        "O(n log n + m log m) time due to sorting."
+      ],
+      "referenceSolutionPython": "def findContentChildren(greed, sizes):\n    g = sorted(greed)\n    child = 0\n    for s in sorted(sizes):\n        if child < len(g) and s >= g[child]:\n            child += 1\n    return child\n"
+    }
+  },
+  {
+    "slug": "climbing-stairs-ways",
+    "type": "DSA",
+    "title": "Ways to Climb a Staircase",
+    "difficulty": "EASY",
+    "tags": [
+      "dynamic-programming"
+    ],
+    "companies": [
+      "amazon",
+      "adobe",
+      "phonepe"
+    ],
+    "bodyMd": "A staircase has `n` steps. From any step you can climb either **1** or **2** steps at a time. Return the number of distinct sequences of moves that take you from the ground to exactly the top step.\n\nThe answer can be large, so return it as a 64-bit integer.\n\n**Example 1**\n\n```\nInput: n = 2\nOutput: 2\n```\n\n_Explanation:_ 1+1 or 2.\n\n**Example 2**\n\n```\nInput: n = 5\nOutput: 8\n```\n\n_Explanation:_ Sequences such as 1+1+1+1+1, 2+2+1, 1+2+2, ... — eight in total.\n\n**Constraints**\n\n- 1 <= n <= 90",
+    "dsa": {
+      "functionName": "climbStairs",
+      "params": [
+        {
+          "name": "n",
+          "type": "int"
+        }
+      ],
+      "returnType": "long",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(n)",
+      "expectedSpaceComplexity": "O(1)",
+      "testCases": [
+        {
+          "input": [
+            2
+          ],
+          "expected": 2,
+          "sample": true
+        },
+        {
+          "input": [
+            5
+          ],
+          "expected": 8,
+          "sample": true
+        },
+        {
+          "input": [
+            1
+          ],
+          "expected": 1,
+          "sample": false
+        },
+        {
+          "input": [
+            3
+          ],
+          "expected": 3,
+          "sample": false
+        },
+        {
+          "input": [
+            10
+          ],
+          "expected": 89,
+          "sample": false
+        },
+        {
+          "input": [
+            80
+          ],
+          "expected": 37889062373143906,
+          "sample": false
+        }
+      ],
+      "hints": [
+        "What was your last move onto step n? How many ways were there to reach the step you came from?",
+        "1D dynamic programming: ways(n) = ways(n - 1) + ways(n - 2), since the final move is either a 1-step or a 2-step. This is the Fibonacci recurrence; you only need the previous two values.",
+        "prev, cur = 1, 1   # ways(0), ways(1)\nrepeat n - 1 times:\n    prev, cur = cur, prev + cur\nreturn cur"
+      ],
+      "expectedPoints": [
+        "Derives the recurrence from the last move.",
+        "Avoids exponential naive recursion via memoisation or iteration.",
+        "O(n) time, O(1) space with two rolling variables.",
+        "Notes the need for a 64-bit result (n = 90 exceeds 32-bit).",
+        "Mentions O(log n) matrix exponentiation as an optional extension."
+      ],
+      "referenceSolutionPython": "def climbStairs(n):\n    prev, cur = 1, 1\n    for _ in range(n - 1):\n        prev, cur = cur, prev + cur\n    return cur\n"
+    }
+  },
+  {
+    "slug": "longest-unique-substring",
+    "type": "DSA",
+    "title": "Longest Run Without Repeats",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "sliding-window",
+      "strings",
+      "hash-map"
+    ],
+    "companies": [
+      "amazon",
+      "google",
+      "uber"
+    ],
+    "bodyMd": "Given a string `s`, return the length of the longest **contiguous** substring in which no character appears more than once.\n\n**Example 1**\n\n```\nInput: s = \"abcabcbb\"\nOutput: 3\n```\n\n_Explanation:_ \"abc\" is the longest substring with all distinct characters.\n\n**Example 2**\n\n```\nInput: s = \"bbbbb\"\nOutput: 1\n```\n\n**Constraints**\n\n- 0 <= s.length <= 5 * 10^4\n- s may contain letters, digits, symbols and spaces.",
+    "dsa": {
+      "functionName": "lengthOfLongestSubstring",
+      "params": [
+        {
+          "name": "s",
+          "type": "string"
+        }
+      ],
+      "returnType": "int",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(n)",
+      "expectedSpaceComplexity": "O(min(n, k))",
+      "testCases": [
+        {
+          "input": [
+            "abcabcbb"
+          ],
+          "expected": 3,
+          "sample": true
+        },
+        {
+          "input": [
+            "bbbbb"
+          ],
+          "expected": 1,
+          "sample": true
+        },
+        {
+          "input": [
+            ""
+          ],
+          "expected": 0,
+          "sample": false
+        },
+        {
+          "input": [
+            "pwwkew"
+          ],
+          "expected": 3,
+          "sample": false
+        },
+        {
+          "input": [
+            "dvdf"
+          ],
+          "expected": 3,
+          "sample": false
+        },
+        {
+          "input": [
+            "abba"
+          ],
+          "expected": 2,
+          "sample": false
+        },
+        {
+          "input": [
+            " "
+          ],
+          "expected": 1,
+          "sample": false
+        }
+      ],
+      "hints": [
+        "If the window s[left..right] has no repeats and s[right+1] is already in it, where is the earliest place the next valid window could start?",
+        "Sliding window with a map from character to its last index. When the incoming character was last seen inside the current window, jump left to just past that index. Never move left backwards — that bug shows up on inputs like \"abba\".",
+        "last = {}; left = 0; best = 0\nfor right, ch in enumerate(s):\n    if ch in last and last[ch] >= left: left = last[ch] + 1\n    last[ch] = right\n    best = max(best, right - left + 1)\nreturn best"
+      ],
+      "expectedPoints": [
+        "Uses a variable-size sliding window rather than checking all substrings.",
+        "Stores last-seen indices so left can jump directly.",
+        "Guards against moving left backwards (\"abba\").",
+        "O(n) time, O(min(n, alphabet)) space."
+      ],
+      "referenceSolutionPython": "def lengthOfLongestSubstring(s):\n    last = {}\n    left = 0\n    best = 0\n    for right, ch in enumerate(s):\n        if ch in last and last[ch] >= left:\n            left = last[ch] + 1\n        last[ch] = right\n        best = max(best, right - left + 1)\n    return best\n"
+    }
+  },
+  {
+    "slug": "merge-overlapping-intervals",
+    "type": "DSA",
+    "title": "Merge Overlapping Intervals",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "intervals",
+      "sorting"
+    ],
+    "companies": [
+      "google",
+      "meta",
+      "atlassian"
+    ],
+    "bodyMd": "You are given an array of closed intervals `intervals[i] = [start, end]` in arbitrary order. Merge every group of overlapping intervals and return the result sorted by start.\n\nTwo intervals that merely touch (one ends where the other starts) count as overlapping: `[1, 4]` and `[4, 5]` merge into `[1, 5]`.\n\n**Example 1**\n\n```\nInput: intervals = [[1, 3], [2, 6], [8, 10], [15, 18]]\nOutput: [[1, 6], [8, 10], [15, 18]]\n```\n\n_Explanation:_ [1, 3] and [2, 6] overlap.\n\n**Example 2**\n\n```\nInput: intervals = [[1, 4], [4, 5]]\nOutput: [[1, 5]]\n```\n\n_Explanation:_ Touching intervals are merged.\n\n**Constraints**\n\n- 1 <= intervals.length <= 10^4\n- intervals[i].length == 2\n- 0 <= start <= end <= 10^4",
+    "dsa": {
+      "functionName": "merge",
+      "params": [
+        {
+          "name": "intervals",
+          "type": "int[][]"
+        }
+      ],
+      "returnType": "int[][]",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(n log n)",
+      "expectedSpaceComplexity": "O(n)",
+      "testCases": [
+        {
+          "input": [
+            [
+              [
+                1,
+                3
+              ],
+              [
+                2,
+                6
+              ],
+              [
+                8,
+                10
+              ],
+              [
+                15,
+                18
+              ]
+            ]
+          ],
+          "expected": [
+            [
+              1,
+              6
+            ],
+            [
+              8,
+              10
+            ],
+            [
+              15,
+              18
+            ]
+          ],
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              [
+                1,
+                4
+              ],
+              [
+                4,
+                5
+              ]
+            ]
+          ],
+          "expected": [
+            [
+              1,
+              5
+            ]
+          ],
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              [
+                5,
+                7
+              ]
+            ]
+          ],
+          "expected": [
+            [
+              5,
+              7
+            ]
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              [
+                1,
+                4
+              ],
+              [
+                0,
+                4
+              ]
+            ]
+          ],
+          "expected": [
+            [
+              0,
+              4
+            ]
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              [
+                1,
+                10
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                4,
+                5
+              ]
+            ]
+          ],
+          "expected": [
+            [
+              1,
+              10
+            ]
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              [
+                6,
+                8
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                3,
+                4
+              ],
+              [
+                2,
+                3
+              ]
+            ]
+          ],
+          "expected": [
+            [
+              1,
+              4
+            ],
+            [
+              6,
+              8
+            ]
+          ],
+          "sample": false
+        }
+      ],
+      "hints": [
+        "If the intervals were sorted by start, how would you know whether the next one overlaps anything you have already merged?",
+        "Sort by start, then sweep. Only the last merged interval can overlap the next one, because starts are non-decreasing. If next.start <= last.end, extend last.end to max(last.end, next.end); otherwise start a new block.",
+        "sort intervals by start\nout = []\nfor [s, e] in intervals:\n    if out and s <= out[-1].end: out[-1].end = max(out[-1].end, e)\n    else: out.append([s, e])\nreturn out"
+      ],
+      "expectedPoints": [
+        "Sorts by start; explains why only the last merged interval needs checking.",
+        "Uses max when extending (contained intervals like [1,10] then [2,3]).",
+        "Treats touching intervals as overlapping, per the spec.",
+        "O(n log n) time dominated by sorting; O(n) output space."
+      ],
+      "referenceSolutionPython": "def merge(intervals):\n    out = []\n    for s, e in sorted(intervals):\n        if out and s <= out[-1][1]:\n            if e > out[-1][1]:\n                out[-1][1] = e\n        else:\n            out.append([s, e])\n    return out\n"
+    }
+  },
+  {
+    "slug": "count-islands-grid",
+    "type": "DSA",
+    "title": "Count the Islands",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "graphs",
+      "bfs",
+      "dfs",
+      "matrix"
+    ],
+    "companies": [
+      "amazon",
+      "microsoft",
+      "flipkart"
+    ],
+    "bodyMd": "A map is given as an array of equal-length strings `grid`, where `'1'` is land and `'0'` is water. An **island** is a maximal group of land cells connected horizontally or vertically (not diagonally).\n\nReturn the number of islands.\n\n**Example 1**\n\n```\nInput: grid = [\"11110\", \"11010\", \"11000\", \"00000\"]\nOutput: 1\n```\n\n_Explanation:_ All land cells are connected.\n\n**Example 2**\n\n```\nInput: grid = [\"11000\", \"11000\", \"00100\", \"00011\"]\nOutput: 3\n```\n\n_Explanation:_ Top-left block, the single middle cell, and the bottom-right pair.\n\n**Constraints**\n\n- 1 <= grid.length, grid[i].length <= 300\n- All rows have the same length.\n- grid[i][j] is '0' or '1'.",
+    "dsa": {
+      "functionName": "numIslands",
+      "params": [
+        {
+          "name": "grid",
+          "type": "string[]"
+        }
+      ],
+      "returnType": "int",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(R * C)",
+      "expectedSpaceComplexity": "O(R * C)",
+      "testCases": [
+        {
+          "input": [
+            [
+              "11110",
+              "11010",
+              "11000",
+              "00000"
+            ]
+          ],
+          "expected": 1,
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              "11000",
+              "11000",
+              "00100",
+              "00011"
+            ]
+          ],
+          "expected": 3,
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              "0"
+            ]
+          ],
+          "expected": 0,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              "1"
+            ]
+          ],
+          "expected": 1,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              "101",
+              "010",
+              "101"
+            ]
+          ],
+          "expected": 5,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              "111",
+              "101",
+              "111"
+            ]
+          ],
+          "expected": 1,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              "1100",
+              "0110",
+              "0011"
+            ]
+          ],
+          "expected": 1,
+          "sample": false
+        }
+      ],
+      "hints": [
+        "When you find a land cell you have never seen, how do you make sure the rest of its island is not counted again?",
+        "Treat the grid as a graph of land cells with 4-directional edges and count connected components. For every unvisited land cell, increment the count and flood-fill (BFS or iterative DFS) to mark its whole island visited.",
+        "visited = set(); count = 0\nfor each cell (r, c):\n    if land and not visited:\n        count += 1\n        BFS from (r, c), marking 4-neighbour land cells visited\nreturn count"
+      ],
+      "expectedPoints": [
+        "Models the problem as counting connected components.",
+        "Flood fills with BFS or iterative DFS; mentions recursion-depth risk on a 300x300 all-land grid.",
+        "Checks bounds and only 4-directional neighbours.",
+        "O(R * C) time and O(R * C) worst-case space.",
+        "Mentions union-find as an alternative."
+      ],
+      "referenceSolutionPython": "from collections import deque\n\ndef numIslands(grid):\n    rows = len(grid)\n    cols = len(grid[0]) if rows else 0\n    seen = [[False] * cols for _ in range(rows)]\n    count = 0\n    for r in range(rows):\n        for c in range(cols):\n            if grid[r][c] == '1' and not seen[r][c]:\n                count += 1\n                seen[r][c] = True\n                q = deque([(r, c)])\n                while q:\n                    x, y = q.popleft()\n                    for nx, ny in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):\n                        if 0 <= nx < rows and 0 <= ny < cols and grid[nx][ny] == '1' and not seen[nx][ny]:\n                            seen[nx][ny] = True\n                            q.append((nx, ny))\n    return count\n"
+    }
+  },
+  {
+    "slug": "course-order-topological",
+    "type": "DSA",
+    "title": "Course Order With Prerequisites",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "graphs",
+      "topological-sort",
+      "heap"
+    ],
+    "companies": [
+      "google",
+      "uber",
+      "atlassian"
+    ],
+    "bodyMd": "There are `numCourses` courses labelled `0` to `numCourses - 1`. Each entry `prerequisites[i] = [a, b]` means course `b` must be completed before course `a`.\n\nReturn an ordering in which all courses can be taken. Because many orders may be valid, return the **lexicographically smallest** one (at every step, take the smallest-numbered course that is currently available). If the prerequisites contain a cycle and no valid order exists, return an empty array.\n\n**Example 1**\n\n```\nInput: numCourses = 2, prerequisites = [[1, 0]]\nOutput: [0, 1]\n```\n\n_Explanation:_ Course 0 must come before course 1.\n\n**Example 2**\n\n```\nInput: numCourses = 4, prerequisites = [[1, 0], [2, 0], [3, 1], [3, 2]]\nOutput: [0, 1, 2, 3]\n```\n\n_Explanation:_ [0, 2, 1, 3] is also valid, but [0, 1, 2, 3] is lexicographically smaller.\n\n**Constraints**\n\n- 1 <= numCourses <= 2000\n- 0 <= prerequisites.length <= 5000\n- prerequisites[i].length == 2; 0 <= a, b < numCourses; a != b\n- Pairs may repeat.",
+    "dsa": {
+      "functionName": "findOrder",
+      "params": [
+        {
+          "name": "numCourses",
+          "type": "int"
+        },
+        {
+          "name": "prerequisites",
+          "type": "int[][]"
+        }
+      ],
+      "returnType": "int[]",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O((V + E) log V)",
+      "expectedSpaceComplexity": "O(V + E)",
+      "testCases": [
+        {
+          "input": [
+            2,
+            [
+              [
+                1,
+                0
+              ]
+            ]
+          ],
+          "expected": [
+            0,
+            1
+          ],
+          "sample": true
+        },
+        {
+          "input": [
+            4,
+            [
+              [
+                1,
+                0
+              ],
+              [
+                2,
+                0
+              ],
+              [
+                3,
+                1
+              ],
+              [
+                3,
+                2
+              ]
+            ]
+          ],
+          "expected": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "sample": true
+        },
+        {
+          "input": [
+            2,
+            [
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ]
+            ]
+          ],
+          "expected": [],
+          "sample": false
+        },
+        {
+          "input": [
+            1,
+            []
+          ],
+          "expected": [
+            0
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            4,
+            [
+              [
+                0,
+                3
+              ],
+              [
+                1,
+                3
+              ],
+              [
+                2,
+                0
+              ]
+            ]
+          ],
+          "expected": [
+            3,
+            0,
+            1,
+            2
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            5,
+            [
+              [
+                1,
+                0
+              ],
+              [
+                2,
+                1
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                4,
+                3
+              ]
+            ]
+          ],
+          "expected": [],
+          "sample": false
+        },
+        {
+          "input": [
+            6,
+            [
+              [
+                2,
+                5
+              ],
+              [
+                0,
+                5
+              ],
+              [
+                0,
+                4
+              ],
+              [
+                1,
+                4
+              ],
+              [
+                3,
+                2
+              ],
+              [
+                1,
+                3
+              ]
+            ]
+          ],
+          "expected": [
+            4,
+            5,
+            0,
+            2,
+            3,
+            1
+          ],
+          "sample": false
+        }
+      ],
+      "hints": [
+        "Which courses can you take right now, before anything else? What changes once you complete one of them?",
+        "Kahn's algorithm (topological sort by in-degree). Courses with in-degree 0 are available; completing one decrements its dependents. Use a min-heap instead of a plain queue to always pick the smallest available course. If fewer than numCourses are output, there is a cycle.",
+        "build adjacency b -> a and indegree[a]\nheap = all courses with indegree 0\nwhile heap: c = pop min; append c\n    for each dependent d of c: indegree[d] -= 1; if 0: push d\nreturn order if len(order) == numCourses else []"
+      ],
+      "expectedPoints": [
+        "Models courses as a DAG and uses topological sort.",
+        "Detects cycles by comparing output size with numCourses (or via DFS colouring).",
+        "Uses a min-heap to produce the lexicographically smallest order.",
+        "Handles duplicate edges consistently (counting them in in-degree is fine).",
+        "O((V + E) log V) time with the heap, O(V + E) space."
+      ],
+      "referenceSolutionPython": "import heapq\n\ndef findOrder(numCourses, prerequisites):\n    adj = [[] for _ in range(numCourses)]\n    indeg = [0] * numCourses\n    for a, b in prerequisites:\n        adj[b].append(a)\n        indeg[a] += 1\n    heap = [c for c in range(numCourses) if indeg[c] == 0]\n    heapq.heapify(heap)\n    order = []\n    while heap:\n        c = heapq.heappop(heap)\n        order.append(c)\n        for d in adj[c]:\n            indeg[d] -= 1\n            if indeg[d] == 0:\n                heapq.heappush(heap, d)\n    return order if len(order) == numCourses else []\n"
+    }
+  },
+  {
+    "slug": "top-k-frequent-elements",
+    "type": "DSA",
+    "title": "Most Frequent K Values",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "heap",
+      "hash-map",
+      "sorting"
+    ],
+    "companies": [
+      "amazon",
+      "meta",
+      "swiggy"
+    ],
+    "bodyMd": "Given an integer array `nums` and an integer `k`, return the `k` values that occur most often.\n\nOrder the result by **frequency descending**; break ties by **value ascending**. `k` never exceeds the number of distinct values.\n\n**Example 1**\n\n```\nInput: nums = [1, 1, 1, 2, 2, 3], k = 2\nOutput: [1, 2]\n```\n\n_Explanation:_ 1 appears three times, 2 twice.\n\n**Example 2**\n\n```\nInput: nums = [4, 4, -1, -1, 7], k = 2\nOutput: [-1, 4]\n```\n\n_Explanation:_ 4 and -1 both appear twice; the tie is broken by smaller value first.\n\n**Constraints**\n\n- 1 <= nums.length <= 10^5\n- -10^4 <= nums[i] <= 10^4\n- 1 <= k <= number of distinct values in nums",
+    "dsa": {
+      "functionName": "topKFrequent",
+      "params": [
+        {
+          "name": "nums",
+          "type": "int[]"
+        },
+        {
+          "name": "k",
+          "type": "int"
+        }
+      ],
+      "returnType": "int[]",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(n + d log k)",
+      "expectedSpaceComplexity": "O(d)",
+      "testCases": [
+        {
+          "input": [
+            [
+              1,
+              1,
+              1,
+              2,
+              2,
+              3
+            ],
+            2
+          ],
+          "expected": [
+            1,
+            2
+          ],
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              4,
+              4,
+              -1,
+              -1,
+              7
+            ],
+            2
+          ],
+          "expected": [
+            -1,
+            4
+          ],
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              1
+            ],
+            1
+          ],
+          "expected": [
+            1
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              5,
+              3,
+              5,
+              3,
+              9
+            ],
+            3
+          ],
+          "expected": [
+            3,
+            5,
+            9
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              2,
+              2,
+              3,
+              3,
+              3,
+              1
+            ],
+            1
+          ],
+          "expected": [
+            3
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              0,
+              0,
+              0,
+              -2,
+              -2,
+              6,
+              6,
+              6,
+              6
+            ],
+            3
+          ],
+          "expected": [
+            6,
+            0,
+            -2
+          ],
+          "sample": false
+        }
+      ],
+      "hints": [
+        "Start by counting. Once you know every value's frequency, do you really need to sort all of them to find the top k?",
+        "Count with a hash map, then select the top k with a heap keyed by (frequency desc, value asc) — O(n + d log k) using a size-k heap, or O(n + k log d) by heapifying everything. Bucket sort by frequency gives O(n) but you still need the tie-break order inside a bucket.",
+        "freq = count occurrences\nkeys = [(-f, v) for v, f in freq]\nselect the k smallest keys with a heap\nreturn their values in key order"
+      ],
+      "expectedPoints": [
+        "Counts frequencies with a hash map in O(n).",
+        "Uses a heap of size k (or bucket sort) instead of a full sort when d is large.",
+        "Implements the exact tie-break rule (frequency desc, value asc).",
+        "States complexity in terms of n, distinct count d, and k."
+      ],
+      "referenceSolutionPython": "import heapq\nfrom collections import Counter\n\ndef topKFrequent(nums, k):\n    freq = Counter(nums)\n    best = heapq.nsmallest(k, freq.items(), key=lambda kv: (-kv[1], kv[0]))\n    return [v for v, _ in best]\n"
+    }
+  },
+  {
+    "slug": "subarray-sum-equals-k",
+    "type": "DSA",
+    "title": "Count Subarrays Summing to K",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "prefix-sum",
+      "hash-map",
+      "arrays"
+    ],
+    "companies": [
+      "google",
+      "phonepe",
+      "razorpay"
+    ],
+    "bodyMd": "Given an integer array `nums` (values may be negative) and an integer `k`, return the number of non-empty **contiguous** subarrays whose elements sum to exactly `k`.\n\n**Example 1**\n\n```\nInput: nums = [1, 1, 1], k = 2\nOutput: 2\n```\n\n_Explanation:_ The subarrays at positions [0..1] and [1..2].\n\n**Example 2**\n\n```\nInput: nums = [1, 2, 3], k = 3\nOutput: 2\n```\n\n_Explanation:_ [1, 2] and [3].\n\n**Constraints**\n\n- 1 <= nums.length <= 2 * 10^4\n- -1000 <= nums[i] <= 1000\n- -10^7 <= k <= 10^7",
+    "dsa": {
+      "functionName": "subarraySum",
+      "params": [
+        {
+          "name": "nums",
+          "type": "int[]"
+        },
+        {
+          "name": "k",
+          "type": "int"
+        }
+      ],
+      "returnType": "int",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(n)",
+      "expectedSpaceComplexity": "O(n)",
+      "testCases": [
+        {
+          "input": [
+            [
+              1,
+              1,
+              1
+            ],
+            2
+          ],
+          "expected": 2,
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              1,
+              2,
+              3
+            ],
+            3
+          ],
+          "expected": 2,
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              1
+            ],
+            0
+          ],
+          "expected": 0,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              0,
+              0,
+              0
+            ],
+            0
+          ],
+          "expected": 6,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              1,
+              -1,
+              0
+            ],
+            0
+          ],
+          "expected": 3,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              3,
+              4,
+              7,
+              2,
+              -3,
+              1,
+              4,
+              2
+            ],
+            7
+          ],
+          "expected": 4,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              -1,
+              -1,
+              1
+            ],
+            0
+          ],
+          "expected": 1,
+          "sample": false
+        }
+      ],
+      "hints": [
+        "The sum of nums[i..j] can be written using two prefix sums. What equation must those prefix sums satisfy?",
+        "Prefix sums plus a hash map. sum(i..j) = P[j+1] - P[i], so for each end position you need the number of earlier prefixes equal to P - k. A sliding window does not work because values can be negative.",
+        "count = {0: 1}; prefix = 0; total = 0\nfor x in nums:\n    prefix += x\n    total += count.get(prefix - k, 0)\n    count[prefix] += 1\nreturn total"
+      ],
+      "expectedPoints": [
+        "Explains why two pointers / sliding window fail with negative numbers.",
+        "Uses running prefix sum with a frequency map seeded with {0: 1}.",
+        "Queries the map before inserting the current prefix.",
+        "Handles zeros (many overlapping subarrays) correctly.",
+        "O(n) time and O(n) space."
+      ],
+      "referenceSolutionPython": "def subarraySum(nums, k):\n    seen = {0: 1}\n    prefix = 0\n    total = 0\n    for x in nums:\n        prefix += x\n        total += seen.get(prefix - k, 0)\n        seen[prefix] = seen.get(prefix, 0) + 1\n    return total\n"
+    }
+  },
+  {
+    "slug": "product-except-self",
+    "type": "DSA",
+    "title": "Product of All Other Elements",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "arrays",
+      "prefix-sum"
+    ],
+    "companies": [
+      "amazon",
+      "microsoft",
+      "goldman-sachs"
+    ],
+    "bodyMd": "Given an integer array `nums`, return an array `out` where `out[i]` is the product of every element of `nums` **except** `nums[i]`.\n\nDo it in `O(n)` time **without using division** (the input may contain zeros).\n\n**Example 1**\n\n```\nInput: nums = [1, 2, 3, 4]\nOutput: [24, 12, 8, 6]\n```\n\n_Explanation:_ out[0] = 2*3*4, out[1] = 1*3*4, and so on.\n\n**Example 2**\n\n```\nInput: nums = [-1, 1, 0, -3, 3]\nOutput: [0, 0, 9, 0, 0]\n```\n\n_Explanation:_ Only the position holding the zero gets a non-zero product.\n\n**Constraints**\n\n- 2 <= nums.length <= 10^5\n- -30 <= nums[i] <= 30\n- Every product of any subset of nums fits in a 32-bit signed integer.",
+    "dsa": {
+      "functionName": "productExceptSelf",
+      "params": [
+        {
+          "name": "nums",
+          "type": "int[]"
+        }
+      ],
+      "returnType": "int[]",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(n)",
+      "expectedSpaceComplexity": "O(1) extra",
+      "testCases": [
+        {
+          "input": [
+            [
+              1,
+              2,
+              3,
+              4
+            ]
+          ],
+          "expected": [
+            24,
+            12,
+            8,
+            6
+          ],
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              -1,
+              1,
+              0,
+              -3,
+              3
+            ]
+          ],
+          "expected": [
+            0,
+            0,
+            9,
+            0,
+            0
+          ],
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              2,
+              3
+            ]
+          ],
+          "expected": [
+            3,
+            2
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              0,
+              0
+            ]
+          ],
+          "expected": [
+            0,
+            0
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              5,
+              0,
+              2
+            ]
+          ],
+          "expected": [
+            0,
+            10,
+            0
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              -2,
+              -3,
+              4,
+              1
+            ]
+          ],
+          "expected": [
+            -12,
+            -8,
+            6,
+            24
+          ],
+          "sample": false
+        }
+      ],
+      "hints": [
+        "The product of everything except nums[i] splits into two parts. What are they?",
+        "Prefix and suffix products: out[i] = (product of nums[0..i-1]) * (product of nums[i+1..n-1]). Fill the prefix products left-to-right into out, then sweep right-to-left multiplying by a running suffix product to stay at O(1) extra space.",
+        "out = [1] * n\nleft = 1\nfor i in 0..n-1: out[i] = left; left *= nums[i]\nright = 1\nfor i in n-1..0: out[i] *= right; right *= nums[i]\nreturn out"
+      ],
+      "expectedPoints": [
+        "Explains why division fails with zeros (and is disallowed).",
+        "Uses prefix and suffix products.",
+        "Achieves O(1) extra space by reusing the output array.",
+        "Handles one zero vs. multiple zeros correctly.",
+        "O(n) time."
+      ],
+      "referenceSolutionPython": "def productExceptSelf(nums):\n    n = len(nums)\n    out = [1] * n\n    left = 1\n    for i in range(n):\n        out[i] = left\n        left *= nums[i]\n    right = 1\n    for i in range(n - 1, -1, -1):\n        out[i] *= right\n        right *= nums[i]\n    return out\n"
+    }
+  },
+  {
+    "slug": "coin-change-minimum",
+    "type": "DSA",
+    "title": "Fewest Coins for an Amount",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "dynamic-programming"
+    ],
+    "companies": [
+      "amazon",
+      "walmart-global-tech",
+      "phonepe"
+    ],
+    "bodyMd": "You have an unlimited supply of coins of each denomination in `coins`. Return the **minimum number of coins** needed to make exactly `amount`. If it cannot be done, return `-1`. Making `0` requires `0` coins.\n\n**Example 1**\n\n```\nInput: coins = [1, 2, 5], amount = 11\nOutput: 3\n```\n\n_Explanation:_ 5 + 5 + 1.\n\n**Example 2**\n\n```\nInput: coins = [2], amount = 3\nOutput: -1\n```\n\n_Explanation:_ Only even amounts can be formed.\n\n**Constraints**\n\n- 1 <= coins.length <= 12\n- 1 <= coins[i] <= 2^31 - 1\n- 0 <= amount <= 10^4",
+    "dsa": {
+      "functionName": "coinChange",
+      "params": [
+        {
+          "name": "coins",
+          "type": "int[]"
+        },
+        {
+          "name": "amount",
+          "type": "int"
+        }
+      ],
+      "returnType": "int",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(amount * n)",
+      "expectedSpaceComplexity": "O(amount)",
+      "testCases": [
+        {
+          "input": [
+            [
+              1,
+              2,
+              5
+            ],
+            11
+          ],
+          "expected": 3,
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              2
+            ],
+            3
+          ],
+          "expected": -1,
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              1
+            ],
+            0
+          ],
+          "expected": 0,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              2,
+              5,
+              10,
+              1
+            ],
+            27
+          ],
+          "expected": 4,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              186,
+              419,
+              83,
+              408
+            ],
+            6249
+          ],
+          "expected": 20,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              3,
+              7
+            ],
+            5
+          ],
+          "expected": -1,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              1,
+              3,
+              4
+            ],
+            6
+          ],
+          "expected": 2,
+          "sample": false
+        }
+      ],
+      "hints": [
+        "Does always taking the largest coin work? Try coins [1, 3, 4] with amount 6.",
+        "Greedy fails for arbitrary denominations, so use bottom-up DP: dp[x] = min over coins c <= x of dp[x - c] + 1, with dp[0] = 0 and unreachable amounts marked infinity. Each amount reuses optimal answers for smaller amounts.",
+        "dp = [INF] * (amount + 1); dp[0] = 0\nfor x in 1..amount:\n    for c in coins:\n        if c <= x: dp[x] = min(dp[x], dp[x - c] + 1)\nreturn dp[amount] if finite else -1"
+      ],
+      "expectedPoints": [
+        "Shows a counterexample to greedy and moves to DP.",
+        "Defines the state and recurrence clearly, including the base case dp[0] = 0.",
+        "Uses a sentinel for unreachable amounts and maps it to -1.",
+        "O(amount * coins) time, O(amount) space.",
+        "Mentions BFS over amounts as an equivalent alternative."
+      ],
+      "referenceSolutionPython": "def coinChange(coins, amount):\n    INF = float('inf')\n    dp = [0] + [INF] * amount\n    for x in range(1, amount + 1):\n        best = INF\n        for c in coins:\n            if c <= x and dp[x - c] + 1 < best:\n                best = dp[x - c] + 1\n        dp[x] = best\n    return dp[amount] if dp[amount] != INF else -1\n"
+    }
+  },
+  {
+    "slug": "search-rotated-sorted-array",
+    "type": "DSA",
+    "title": "Search a Rotated Sorted Array",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "binary-search",
+      "arrays"
+    ],
+    "companies": [
+      "microsoft",
+      "oracle",
+      "adobe"
+    ],
+    "bodyMd": "An array of **distinct** integers was sorted in increasing order and then rotated at an unknown pivot (for example `[0, 1, 2, 4, 5, 6, 7]` might become `[4, 5, 6, 7, 0, 1, 2]`).\n\nGiven the rotated array `nums` and a `target`, return the index of `target`, or `-1` if it is absent. Your algorithm must run in `O(log n)` time.\n\n**Example 1**\n\n```\nInput: nums = [4, 5, 6, 7, 0, 1, 2], target = 0\nOutput: 4\n```\n\n**Example 2**\n\n```\nInput: nums = [4, 5, 6, 7, 0, 1, 2], target = 3\nOutput: -1\n```\n\n**Constraints**\n\n- 1 <= nums.length <= 5000\n- -10^4 <= nums[i], target <= 10^4\n- All values are distinct; nums is a rotation of a sorted array (possibly rotated by 0).",
+    "dsa": {
+      "functionName": "search",
+      "params": [
+        {
+          "name": "nums",
+          "type": "int[]"
+        },
+        {
+          "name": "target",
+          "type": "int"
+        }
+      ],
+      "returnType": "int",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(log n)",
+      "expectedSpaceComplexity": "O(1)",
+      "testCases": [
+        {
+          "input": [
+            [
+              4,
+              5,
+              6,
+              7,
+              0,
+              1,
+              2
+            ],
+            0
+          ],
+          "expected": 4,
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              4,
+              5,
+              6,
+              7,
+              0,
+              1,
+              2
+            ],
+            3
+          ],
+          "expected": -1,
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              1
+            ],
+            0
+          ],
+          "expected": -1,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              3,
+              1
+            ],
+            1
+          ],
+          "expected": 1,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              5,
+              1,
+              3
+            ],
+            5
+          ],
+          "expected": 0,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              6,
+              7,
+              8,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            8
+          ],
+          "expected": 2,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            4
+          ],
+          "expected": 3,
+          "sample": false
+        }
+      ],
+      "hints": [
+        "Pick any middle index. Is at least one of the two halves guaranteed to be sorted normally?",
+        "Modified binary search. Compare nums[lo] with nums[mid] to find which half is sorted. If target lies within that sorted half's value range, search there; otherwise search the other half. Each step still discards half the array.",
+        "lo, hi = 0, n - 1\nwhile lo <= hi:\n    mid = (lo + hi) // 2\n    if nums[mid] == target: return mid\n    if nums[lo] <= nums[mid]:   # left half sorted\n        go left if nums[lo] <= target < nums[mid] else go right\n    else: go right if nums[mid] < target <= nums[hi] else go left\nreturn -1"
+      ],
+      "expectedPoints": [
+        "Identifies the sorted half at every step using nums[lo] <= nums[mid].",
+        "Uses correct inclusive/exclusive bounds when testing target's range.",
+        "Handles unrotated arrays and arrays of length 1–2.",
+        "O(log n) time, O(1) space; notes duplicates would break the guarantee."
+      ],
+      "referenceSolutionPython": "def search(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if nums[mid] == target:\n            return mid\n        if nums[lo] <= nums[mid]:\n            if nums[lo] <= target < nums[mid]:\n                hi = mid - 1\n            else:\n                lo = mid + 1\n        else:\n            if nums[mid] < target <= nums[hi]:\n                lo = mid + 1\n            else:\n                hi = mid - 1\n    return -1\n"
+    }
+  },
+  {
+    "slug": "days-until-warmer",
+    "type": "DSA",
+    "title": "Days Until a Warmer Day",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "stack",
+      "arrays"
+    ],
+    "companies": [
+      "google",
+      "zomato",
+      "meesho"
+    ],
+    "bodyMd": "`temps[i]` is the temperature on day `i`. For each day, return how many days you must wait until a **strictly warmer** day. If no warmer day follows, use `0`.\n\n**Example 1**\n\n```\nInput: temps = [73, 74, 75, 71, 69, 72, 76, 73]\nOutput: [1, 1, 4, 2, 1, 1, 0, 0]\n```\n\n_Explanation:_ Day 2 (75) waits until day 6 (76): 4 days.\n\n**Example 2**\n\n```\nInput: temps = [30, 40, 50, 60]\nOutput: [1, 1, 1, 0]\n```\n\n**Constraints**\n\n- 1 <= temps.length <= 10^5\n- 30 <= temps[i] <= 100",
+    "dsa": {
+      "functionName": "dailyTemperatures",
+      "params": [
+        {
+          "name": "temps",
+          "type": "int[]"
+        }
+      ],
+      "returnType": "int[]",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(n)",
+      "expectedSpaceComplexity": "O(n)",
+      "testCases": [
+        {
+          "input": [
+            [
+              73,
+              74,
+              75,
+              71,
+              69,
+              72,
+              76,
+              73
+            ]
+          ],
+          "expected": [
+            1,
+            1,
+            4,
+            2,
+            1,
+            1,
+            0,
+            0
+          ],
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              30,
+              40,
+              50,
+              60
+            ]
+          ],
+          "expected": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              30,
+              60,
+              90
+            ]
+          ],
+          "expected": [
+            1,
+            1,
+            0
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              50
+            ]
+          ],
+          "expected": [
+            0
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              70,
+              70,
+              70
+            ]
+          ],
+          "expected": [
+            0,
+            0,
+            0
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              90,
+              80,
+              70,
+              60,
+              100
+            ]
+          ],
+          "expected": [
+            4,
+            3,
+            2,
+            1,
+            0
+          ],
+          "sample": false
+        }
+      ],
+      "hints": [
+        "When a warm day arrives, which earlier days does it resolve at once? Do those days have something in common?",
+        "Monotonic stack of indices whose temperatures are non-increasing from bottom to top (days still waiting). A new day pops every waiting day that is strictly colder and records the distance. Each index is pushed and popped at most once.",
+        "ans = [0] * n; stack = []\nfor i, t in enumerate(temps):\n    while stack and temps[stack[-1]] < t:\n        j = pop(); ans[j] = i - j\n    push i\nreturn ans"
+      ],
+      "expectedPoints": [
+        "Recognises the next-greater-element pattern.",
+        "Maintains a monotonic stack of indices (not values).",
+        "Uses strict comparison so equal temperatures do not resolve each other.",
+        "Amortised O(n) time argument; O(n) space."
+      ],
+      "referenceSolutionPython": "def dailyTemperatures(temps):\n    ans = [0] * len(temps)\n    stack = []\n    for i, t in enumerate(temps):\n        while stack and temps[stack[-1]] < t:\n            j = stack.pop()\n            ans[j] = i - j\n        stack.append(i)\n    return ans\n"
+    }
+  },
+  {
+    "slug": "connected-components-union-find",
+    "type": "DSA",
+    "title": "Count Network Clusters",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "union-find",
+      "graphs"
+    ],
+    "companies": [
+      "uber",
+      "salesforce",
+      "flipkart"
+    ],
+    "bodyMd": "A network has `n` machines labelled `0` to `n - 1`. Each entry `edges[i] = [u, v]` is an undirected cable between machines `u` and `v`.\n\nReturn the number of **clusters** (connected components). A machine with no cables forms its own cluster.\n\n**Example 1**\n\n```\nInput: n = 5, edges = [[0, 1], [1, 2], [3, 4]]\nOutput: 2\n```\n\n_Explanation:_ {0, 1, 2} and {3, 4}.\n\n**Example 2**\n\n```\nInput: n = 5, edges = [[0, 1], [1, 2], [2, 3], [3, 4]]\nOutput: 1\n```\n\n**Constraints**\n\n- 1 <= n <= 2000\n- 0 <= edges.length <= 5000\n- 0 <= u, v < n; u != v\n- Edges may be repeated in either direction.",
+    "dsa": {
+      "functionName": "countComponents",
+      "params": [
+        {
+          "name": "n",
+          "type": "int"
+        },
+        {
+          "name": "edges",
+          "type": "int[][]"
+        }
+      ],
+      "returnType": "int",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O((n + E) α(n))",
+      "expectedSpaceComplexity": "O(n)",
+      "testCases": [
+        {
+          "input": [
+            5,
+            [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                3,
+                4
+              ]
+            ]
+          ],
+          "expected": 2,
+          "sample": true
+        },
+        {
+          "input": [
+            5,
+            [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                3,
+                4
+              ]
+            ]
+          ],
+          "expected": 1,
+          "sample": true
+        },
+        {
+          "input": [
+            1,
+            []
+          ],
+          "expected": 1,
+          "sample": false
+        },
+        {
+          "input": [
+            4,
+            []
+          ],
+          "expected": 4,
+          "sample": false
+        },
+        {
+          "input": [
+            4,
+            [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                3,
+                2
+              ]
+            ]
+          ],
+          "expected": 2,
+          "sample": false
+        },
+        {
+          "input": [
+            6,
+            [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                0
+              ],
+              [
+                3,
+                4
+              ]
+            ]
+          ],
+          "expected": 3,
+          "sample": false
+        }
+      ],
+      "hints": [
+        "Start with every machine in its own cluster. What happens to the cluster count each time a cable joins two different clusters?",
+        "Union-find (disjoint set union). Start with n components; each union of two different roots reduces the count by one, while an edge inside one set changes nothing. Path compression plus union by rank/size make operations nearly O(1).",
+        "parent[i] = i for all i; components = n\nfor (u, v) in edges:\n    ru, rv = find(u), find(v)\n    if ru != rv: union by size; components -= 1\nreturn components"
+      ],
+      "expectedPoints": [
+        "Chooses union-find (or BFS/DFS over an adjacency list) and justifies it.",
+        "Implements path compression and union by rank/size.",
+        "Handles isolated nodes, duplicate edges and cycles.",
+        "O((n + E) * α(n)) time, O(n) space."
+      ],
+      "referenceSolutionPython": "def countComponents(n, edges):\n    parent = list(range(n))\n    size = [1] * n\n\n    def find(x):\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]\n            x = parent[x]\n        return x\n\n    components = n\n    for u, v in edges:\n        ru, rv = find(u), find(v)\n        if ru != rv:\n            if size[ru] < size[rv]:\n                ru, rv = rv, ru\n            parent[rv] = ru\n            size[ru] += size[rv]\n            components -= 1\n    return components\n"
+    }
+  },
+  {
+    "slug": "combination-sum-reuse",
+    "type": "DSA",
+    "title": "Combinations Reaching a Target",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "backtracking",
+      "arrays"
+    ],
+    "companies": [
+      "amazon",
+      "uber"
+    ],
+    "bodyMd": "Given an array of **distinct** positive integers `candidates` and a positive integer `target`, return every unique combination of candidates whose sum equals `target`. Each candidate may be used **any number of times**.\n\nWrite each combination in non-decreasing order. The combinations themselves may be returned in any order. Two combinations are different if the count of at least one candidate differs.\n\n**Example 1**\n\n```\nInput: candidates = [2, 3, 6, 7], target = 7\nOutput: [[2, 2, 3], [7]]\n```\n\n**Example 2**\n\n```\nInput: candidates = [2, 3, 5], target = 8\nOutput: [[2, 2, 2, 2], [2, 3, 3], [3, 5]]\n```\n\n**Constraints**\n\n- 1 <= candidates.length <= 30\n- 1 <= candidates[i] <= 40\n- All values in candidates are distinct.\n- 1 <= target <= 40\n- The number of combinations is less than 150.",
+    "dsa": {
+      "functionName": "combinationSum",
+      "params": [
+        {
+          "name": "candidates",
+          "type": "int[]"
+        },
+        {
+          "name": "target",
+          "type": "int"
+        }
+      ],
+      "returnType": "int[][]",
+      "comparator": "UNORDERED_LIST",
+      "expectedTimeComplexity": "O(N^(T/m)) output-sensitive",
+      "expectedSpaceComplexity": "O(T/m) recursion depth",
+      "testCases": [
+        {
+          "input": [
+            [
+              2,
+              3,
+              6,
+              7
+            ],
+            7
+          ],
+          "expected": [
+            [
+              2,
+              2,
+              3
+            ],
+            [
+              7
+            ]
+          ],
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              2,
+              3,
+              5
+            ],
+            8
+          ],
+          "expected": [
+            [
+              2,
+              2,
+              2,
+              2
+            ],
+            [
+              2,
+              3,
+              3
+            ],
+            [
+              3,
+              5
+            ]
+          ],
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              2
+            ],
+            1
+          ],
+          "expected": [],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              1
+            ],
+            2
+          ],
+          "expected": [
+            [
+              1,
+              1
+            ]
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              5,
+              10
+            ],
+            15
+          ],
+          "expected": [
+            [
+              5,
+              5,
+              5
+            ],
+            [
+              5,
+              10
+            ]
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              8,
+              4,
+              2
+            ],
+            8
+          ],
+          "expected": [
+            [
+              2,
+              2,
+              2,
+              2
+            ],
+            [
+              2,
+              2,
+              4
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              8
+            ]
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              2,
+              3
+            ],
+            6
+          ],
+          "expected": [
+            [
+              2,
+              2,
+              2
+            ],
+            [
+              3,
+              3
+            ]
+          ],
+          "sample": false
+        }
+      ],
+      "hints": [
+        "How can you avoid producing [2, 3, 2] and [2, 2, 3] as separate answers?",
+        "Backtracking over sorted candidates with a start index: at each level you may reuse the current candidate or move to a later one, never an earlier one. That generates each multiset exactly once, already in non-decreasing order. Prune once a candidate exceeds the remaining sum.",
+        "sort candidates\ndef dfs(start, remaining, path):\n    if remaining == 0: record copy of path; return\n    for i from start: \n        if cand[i] > remaining: break\n        path.push(cand[i]); dfs(i, remaining - cand[i], path); path.pop()\ndfs(0, target, [])"
+      ],
+      "expectedPoints": [
+        "Uses backtracking with a start index to avoid permutations of the same combination.",
+        "Passes i (not i + 1) to allow reuse of a candidate.",
+        "Sorts and prunes when a candidate exceeds the remaining sum.",
+        "Copies the path when recording a result.",
+        "Discusses exponential output-sensitive complexity, roughly O(N^(T/m))."
+      ],
+      "referenceSolutionPython": "def combinationSum(candidates, target):\n    cands = sorted(candidates)\n    out = []\n    path = []\n\n    def dfs(start, remaining):\n        if remaining == 0:\n            out.append(path[:])\n            return\n        for i in range(start, len(cands)):\n            c = cands[i]\n            if c > remaining:\n                break\n            path.append(c)\n            dfs(i, remaining - c)\n            path.pop()\n\n    dfs(0, target)\n    return out\n"
+    }
+  },
+  {
+    "slug": "longest-common-subsequence",
+    "type": "DSA",
+    "title": "Longest Common Subsequence",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "dynamic-programming",
+      "strings"
+    ],
+    "companies": [
+      "google",
+      "goldman-sachs",
+      "oracle"
+    ],
+    "bodyMd": "A **subsequence** of a string is obtained by deleting zero or more characters without changing the order of the rest. Given two strings `a` and `b`, return the length of their longest common subsequence. Return `0` if they share none.\n\n**Example 1**\n\n```\nInput: a = \"abcde\", b = \"ace\"\nOutput: 3\n```\n\n_Explanation:_ \"ace\" is a subsequence of both.\n\n**Example 2**\n\n```\nInput: a = \"abc\", b = \"def\"\nOutput: 0\n```\n\n**Constraints**\n\n- 0 <= a.length, b.length <= 1000\n- Strings contain printable ASCII characters (no newlines).",
+    "dsa": {
+      "functionName": "longestCommonSubsequence",
+      "params": [
+        {
+          "name": "a",
+          "type": "string"
+        },
+        {
+          "name": "b",
+          "type": "string"
+        }
+      ],
+      "returnType": "int",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(n * m)",
+      "expectedSpaceComplexity": "O(m)",
+      "testCases": [
+        {
+          "input": [
+            "abcde",
+            "ace"
+          ],
+          "expected": 3,
+          "sample": true
+        },
+        {
+          "input": [
+            "abc",
+            "def"
+          ],
+          "expected": 0,
+          "sample": true
+        },
+        {
+          "input": [
+            "abc",
+            "abc"
+          ],
+          "expected": 3,
+          "sample": false
+        },
+        {
+          "input": [
+            "",
+            "abc"
+          ],
+          "expected": 0,
+          "sample": false
+        },
+        {
+          "input": [
+            "bsbininm",
+            "jmjkbkjkv"
+          ],
+          "expected": 1,
+          "sample": false
+        },
+        {
+          "input": [
+            "AGGTAB",
+            "GXTXAYB"
+          ],
+          "expected": 4,
+          "sample": false
+        },
+        {
+          "input": [
+            "ezupkr",
+            "ubmrapg"
+          ],
+          "expected": 2,
+          "sample": false
+        }
+      ],
+      "hints": [
+        "Compare the last characters of the two strings. What can you conclude if they match, and what are your options if they don't?",
+        "2D dynamic programming over prefixes: dp[i][j] = LCS of a[:i] and b[:j]. If a[i-1] == b[j-1], dp[i][j] = dp[i-1][j-1] + 1; otherwise take max(dp[i-1][j], dp[i][j-1]). Only the previous row is needed.",
+        "prev = [0] * (len(b) + 1)\nfor each char x in a:\n    cur = [0] * (len(b) + 1)\n    for j in 1..len(b):\n        cur[j] = prev[j-1] + 1 if x == b[j-1] else max(prev[j], cur[j-1])\n    prev = cur\nreturn prev[len(b)]"
+      ],
+      "expectedPoints": [
+        "Defines the DP state over prefixes and the two-case recurrence.",
+        "Correct base cases (empty prefix gives 0).",
+        "O(n * m) time; reduces space to O(min(n, m)) with rolling rows.",
+        "Can explain reconstructing the actual subsequence by backtracking through the table."
+      ],
+      "referenceSolutionPython": "def longestCommonSubsequence(a, b):\n    m = len(b)\n    prev = [0] * (m + 1)\n    for x in a:\n        cur = [0] * (m + 1)\n        for j in range(1, m + 1):\n            if x == b[j - 1]:\n                cur[j] = prev[j - 1] + 1\n            else:\n                cur[j] = prev[j] if prev[j] > cur[j - 1] else cur[j - 1]\n        prev = cur\n    return prev[m]\n"
+    }
+  },
+  {
+    "slug": "rotting-oranges-spread",
+    "type": "DSA",
+    "title": "Spreading Spoilage in a Crate",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "bfs",
+      "matrix",
+      "graphs"
+    ],
+    "companies": [
+      "amazon",
+      "swiggy",
+      "zomato"
+    ],
+    "bodyMd": "A crate is an `m x n` grid where `0` is an empty cell, `1` is a fresh orange and `2` is a rotten orange. Every minute, each fresh orange that is 4-directionally adjacent to a rotten one becomes rotten.\n\nReturn the minimum number of minutes until no fresh orange remains. If some fresh orange can never rot, return `-1`. If there are no fresh oranges at the start, return `0`.\n\n**Example 1**\n\n```\nInput: grid = [[2, 1, 1], [1, 1, 0], [0, 1, 1]]\nOutput: 4\n```\n\n_Explanation:_ The bottom-right orange is the last to rot, after 4 minutes.\n\n**Example 2**\n\n```\nInput: grid = [[2, 1, 1], [0, 1, 1], [1, 0, 1]]\nOutput: -1\n```\n\n_Explanation:_ The orange in the bottom-left corner is isolated.\n\n**Constraints**\n\n- 1 <= m, n <= 10\n- grid[i][j] is 0, 1 or 2.",
+    "dsa": {
+      "functionName": "orangesRotting",
+      "params": [
+        {
+          "name": "grid",
+          "type": "int[][]"
+        }
+      ],
+      "returnType": "int",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(m * n)",
+      "expectedSpaceComplexity": "O(m * n)",
+      "testCases": [
+        {
+          "input": [
+            [
+              [
+                2,
+                1,
+                1
+              ],
+              [
+                1,
+                1,
+                0
+              ],
+              [
+                0,
+                1,
+                1
+              ]
+            ]
+          ],
+          "expected": 4,
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              [
+                2,
+                1,
+                1
+              ],
+              [
+                0,
+                1,
+                1
+              ],
+              [
+                1,
+                0,
+                1
+              ]
+            ]
+          ],
+          "expected": -1,
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              [
+                0,
+                2
+              ]
+            ]
+          ],
+          "expected": 0,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              [
+                0
+              ]
+            ]
+          ],
+          "expected": 0,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              [
+                1
+              ]
+            ]
+          ],
+          "expected": -1,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              [
+                2,
+                1,
+                1,
+                1,
+                1
+              ]
+            ]
+          ],
+          "expected": 4,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              [
+                2,
+                0,
+                1
+              ],
+              [
+                1,
+                1,
+                1
+              ]
+            ]
+          ],
+          "expected": 4,
+          "sample": false
+        }
+      ],
+      "hints": [
+        "Several oranges start rotting at the same time. How do you advance all of them together, one minute at a time?",
+        "Multi-source BFS: seed the queue with every rotten orange at time 0 and count the fresh ones. Process the queue level by level; each level is one minute. When the queue empties, any remaining fresh orange is unreachable.",
+        "queue = all rotten cells; fresh = count of 1s; minutes = 0\nwhile queue and fresh > 0:\n    for each cell in current level:\n        rot each fresh 4-neighbour, fresh -= 1, enqueue it\n    minutes += 1\nreturn minutes if fresh == 0 else -1"
+      ],
+      "expectedPoints": [
+        "Uses multi-source BFS rather than separate BFS per rotten orange.",
+        "Counts minutes by BFS levels, not by dequeued cells.",
+        "Returns 0 when there is nothing fresh and -1 for unreachable fresh oranges.",
+        "O(m * n) time and space."
+      ],
+      "referenceSolutionPython": "from collections import deque\n\ndef orangesRotting(grid):\n    g = [row[:] for row in grid]\n    rows, cols = len(g), len(g[0])\n    q = deque()\n    fresh = 0\n    for r in range(rows):\n        for c in range(cols):\n            if g[r][c] == 2:\n                q.append((r, c))\n            elif g[r][c] == 1:\n                fresh += 1\n    minutes = 0\n    while q and fresh > 0:\n        for _ in range(len(q)):\n            x, y = q.popleft()\n            for nx, ny in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):\n                if 0 <= nx < rows and 0 <= ny < cols and g[nx][ny] == 1:\n                    g[nx][ny] = 2\n                    fresh -= 1\n                    q.append((nx, ny))\n        minutes += 1\n    return minutes if fresh == 0 else -1\n"
+    }
+  },
+  {
+    "slug": "trapping-rain-water",
+    "type": "DSA",
+    "title": "Rainwater Between Bars",
+    "difficulty": "HARD",
+    "tags": [
+      "two-pointers",
+      "arrays",
+      "stack"
+    ],
+    "companies": [
+      "google",
+      "amazon",
+      "goldman-sachs"
+    ],
+    "bodyMd": "`height[i]` is the height of a bar of width 1 in an elevation map. After it rains, water collects in the dips between bars.\n\nReturn the total units of water trapped.\n\n**Example 1**\n\n```\nInput: height = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]\nOutput: 6\n```\n\n**Example 2**\n\n```\nInput: height = [4, 2, 0, 3, 2, 5]\nOutput: 9\n```\n\n_Explanation:_ Water levels above each bar: 0, 2, 4, 1, 2, 0.\n\n**Constraints**\n\n- 0 <= height.length <= 2 * 10^4\n- 0 <= height[i] <= 10^5",
+    "dsa": {
+      "functionName": "trap",
+      "params": [
+        {
+          "name": "height",
+          "type": "int[]"
+        }
+      ],
+      "returnType": "int",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(n)",
+      "expectedSpaceComplexity": "O(1)",
+      "testCases": [
+        {
+          "input": [
+            [
+              0,
+              1,
+              0,
+              2,
+              1,
+              0,
+              1,
+              3,
+              2,
+              1,
+              2,
+              1
+            ]
+          ],
+          "expected": 6,
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              4,
+              2,
+              0,
+              3,
+              2,
+              5
+            ]
+          ],
+          "expected": 9,
+          "sample": true
+        },
+        {
+          "input": [
+            []
+          ],
+          "expected": 0,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              5
+            ]
+          ],
+          "expected": 0,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              1,
+              2,
+              3,
+              4
+            ]
+          ],
+          "expected": 0,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              3,
+              0,
+              3
+            ]
+          ],
+          "expected": 3,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              5,
+              4,
+              1,
+              2
+            ]
+          ],
+          "expected": 1,
+          "sample": false
+        }
+      ],
+      "hints": [
+        "How much water sits above a single bar? It depends on two other heights — which ones?",
+        "Water above i = min(maxLeft(i), maxRight(i)) - height[i]. Precomputing both arrays is O(n) space; the two-pointer version keeps leftMax and rightMax and always advances the side with the smaller max, because that side's water level is already determined.",
+        "l, r = 0, n - 1; leftMax = rightMax = 0; water = 0\nwhile l < r:\n    if height[l] < height[r]:\n        leftMax = max(leftMax, height[l]); water += leftMax - height[l]; l += 1\n    else:\n        rightMax = max(rightMax, height[r]); water += rightMax - height[r]; r -= 1\nreturn water"
+      ],
+      "expectedPoints": [
+        "States the per-bar formula min(maxLeft, maxRight) - height.",
+        "Progresses from O(n^2) brute force to O(n) prefix/suffix maxima to O(1)-space two pointers.",
+        "Explains why moving the smaller side is safe.",
+        "Handles empty, single-bar and monotonic inputs (no water).",
+        "Mentions the monotonic-stack alternative that fills water layer by layer."
+      ],
+      "referenceSolutionPython": "def trap(height):\n    l, r = 0, len(height) - 1\n    left_max = right_max = 0\n    water = 0\n    while l < r:\n        if height[l] < height[r]:\n            left_max = max(left_max, height[l])\n            water += left_max - height[l]\n            l += 1\n        else:\n            right_max = max(right_max, height[r])\n            water += right_max - height[r]\n            r -= 1\n    return water\n"
+    }
+  },
+  {
+    "slug": "sliding-window-maximum",
+    "type": "DSA",
+    "title": "Maximum in Every Window",
+    "difficulty": "HARD",
+    "tags": [
+      "sliding-window",
+      "deque",
+      "arrays"
+    ],
+    "companies": [
+      "amazon",
+      "google",
+      "phonepe"
+    ],
+    "bodyMd": "Given an integer array `nums` and a window size `k`, slide the window from the left end to the right end one position at a time. Return an array with the maximum of each window, in order. There are `n - k + 1` windows.\n\n**Example 1**\n\n```\nInput: nums = [1, 3, -1, -3, 5, 3, 6, 7], k = 3\nOutput: [3, 3, 5, 5, 6, 7]\n```\n\n_Explanation:_ Windows: [1,3,-1] -> 3, [3,-1,-3] -> 3, [-1,-3,5] -> 5, [-3,5,3] -> 5, [5,3,6] -> 6, [3,6,7] -> 7.\n\n**Example 2**\n\n```\nInput: nums = [1], k = 1\nOutput: [1]\n```\n\n**Constraints**\n\n- 1 <= nums.length <= 10^5\n- -10^4 <= nums[i] <= 10^4\n- 1 <= k <= nums.length",
+    "dsa": {
+      "functionName": "maxSlidingWindow",
+      "params": [
+        {
+          "name": "nums",
+          "type": "int[]"
+        },
+        {
+          "name": "k",
+          "type": "int"
+        }
+      ],
+      "returnType": "int[]",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(n)",
+      "expectedSpaceComplexity": "O(k)",
+      "testCases": [
+        {
+          "input": [
+            [
+              1,
+              3,
+              -1,
+              -3,
+              5,
+              3,
+              6,
+              7
+            ],
+            3
+          ],
+          "expected": [
+            3,
+            3,
+            5,
+            5,
+            6,
+            7
+          ],
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              1
+            ],
+            1
+          ],
+          "expected": [
+            1
+          ],
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              9,
+              8,
+              7,
+              6
+            ],
+            2
+          ],
+          "expected": [
+            9,
+            8,
+            7
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              1,
+              2,
+              3,
+              4
+            ],
+            4
+          ],
+          "expected": [
+            4
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              -7,
+              -8,
+              7,
+              5,
+              7,
+              1,
+              6,
+              0
+            ],
+            4
+          ],
+          "expected": [
+            7,
+            7,
+            7,
+            7,
+            7
+          ],
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              4,
+              2,
+              12,
+              3,
+              8,
+              1
+            ],
+            1
+          ],
+          "expected": [
+            4,
+            2,
+            12,
+            3,
+            8,
+            1
+          ],
+          "sample": false
+        }
+      ],
+      "hints": [
+        "If a newer element is larger than an older one in the window, can the older one ever be a window maximum again?",
+        "Monotonic deque of indices with decreasing values. Before pushing i, pop smaller-or-equal values from the back (they are dominated forever). Pop the front when it falls out of the window. The front is always the current maximum. Each index enters and leaves once: O(n).",
+        "dq = deque(); out = []\nfor i, x in enumerate(nums):\n    while dq and nums[dq[-1]] <= x: pop back\n    push i to back\n    if dq[0] <= i - k: pop front\n    if i >= k - 1: out.append(nums[dq[0]])\nreturn out"
+      ],
+      "expectedPoints": [
+        "Rejects O(n*k) brute force; a heap with lazy deletion gives O(n log n).",
+        "Uses a monotonic deque of indices for O(n).",
+        "Evicts expired indices from the front by index, not value.",
+        "Amortised analysis: each index pushed and popped at most once.",
+        "Handles k = 1 and k = n."
+      ],
+      "referenceSolutionPython": "from collections import deque\n\ndef maxSlidingWindow(nums, k):\n    dq = deque()\n    out = []\n    for i, x in enumerate(nums):\n        while dq and nums[dq[-1]] <= x:\n            dq.pop()\n        dq.append(i)\n        if dq[0] <= i - k:\n            dq.popleft()\n        if i >= k - 1:\n            out.append(nums[dq[0]])\n    return out\n"
+    }
+  },
+  {
+    "slug": "minimum-window-substring",
+    "type": "DSA",
+    "title": "Smallest Window Containing All Characters",
+    "difficulty": "HARD",
+    "tags": [
+      "sliding-window",
+      "strings",
+      "hash-map"
+    ],
+    "companies": [
+      "meta",
+      "google",
+      "uber"
+    ],
+    "bodyMd": "Given strings `s` and `t`, return the shortest contiguous substring of `s` that contains every character of `t` **including duplicates** (if `t` has two `a`s, the window needs at least two `a`s).\n\nIf several windows share the minimum length, return the one that starts **leftmost**. If no such window exists, return the empty string.\n\n**Example 1**\n\n```\nInput: s = \"ADOBECODEBANC\", t = \"ABC\"\nOutput: \"BANC\"\n```\n\n**Example 2**\n\n```\nInput: s = \"a\", t = \"aa\"\nOutput: \"\"\n```\n\n_Explanation:_ s has only one `a`.\n\n**Constraints**\n\n- 1 <= s.length, t.length <= 10^5\n- s and t consist of upper- and lowercase English letters; matching is case-sensitive.",
+    "dsa": {
+      "functionName": "minWindow",
+      "params": [
+        {
+          "name": "s",
+          "type": "string"
+        },
+        {
+          "name": "t",
+          "type": "string"
+        }
+      ],
+      "returnType": "string",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(|s| + |t|)",
+      "expectedSpaceComplexity": "O(alphabet)",
+      "testCases": [
+        {
+          "input": [
+            "ADOBECODEBANC",
+            "ABC"
+          ],
+          "expected": "BANC",
+          "sample": true
+        },
+        {
+          "input": [
+            "a",
+            "aa"
+          ],
+          "expected": "",
+          "sample": true
+        },
+        {
+          "input": [
+            "a",
+            "a"
+          ],
+          "expected": "a",
+          "sample": false
+        },
+        {
+          "input": [
+            "ab",
+            "b"
+          ],
+          "expected": "b",
+          "sample": false
+        },
+        {
+          "input": [
+            "aaflslflsldkalskaaa",
+            "aaa"
+          ],
+          "expected": "aaa",
+          "sample": false
+        },
+        {
+          "input": [
+            "abcabdebac",
+            "cda"
+          ],
+          "expected": "cabd",
+          "sample": false
+        },
+        {
+          "input": [
+            "xyyx",
+            "xy"
+          ],
+          "expected": "xy",
+          "sample": false
+        }
+      ],
+      "hints": [
+        "Once a window covers t, can you shrink it from the left without breaking coverage? When must you stop?",
+        "Variable sliding window with a need-count map and a counter of characters still missing. Expand right until missing == 0, then shrink left while still valid, recording the best window. Use strict < when updating the best so the leftmost minimum wins.",
+        "need = Counter(t); missing = len(t); left = 0; best = (inf, 0)\nfor right, ch in enumerate(s):\n    if need[ch] > 0: missing -= 1\n    need[ch] -= 1   # may go negative for surplus chars\n    while missing == 0:\n        if right - left + 1 < best.len: best = (len, left)\n        need[s[left]] += 1; if it is now > 0: missing += 1; left += 1\nreturn s[best.start : best.start + best.len] or ''"
+      ],
+      "expectedPoints": [
+        "Uses expand-then-shrink sliding window, O(|s| + |t|).",
+        "Tracks required multiplicities, not just the set of characters.",
+        "Maintains a single 'missing' counter instead of rescanning the map.",
+        "Correct tie-breaking (strict < keeps leftmost) and empty-string result.",
+        "Mentions filtering s to relevant characters as an optimisation when t is small."
+      ],
+      "referenceSolutionPython": "from collections import Counter\n\ndef minWindow(s, t):\n    need = Counter(t)\n    missing = len(t)\n    left = 0\n    best_len, best_start = float('inf'), 0\n    for right, ch in enumerate(s):\n        if need[ch] > 0:\n            missing -= 1\n        need[ch] -= 1\n        while missing == 0:\n            if right - left + 1 < best_len:\n                best_len, best_start = right - left + 1, left\n            need[s[left]] += 1\n            if need[s[left]] > 0:\n                missing += 1\n            left += 1\n    return \"\" if best_len == float('inf') else s[best_start:best_start + best_len]\n"
+    }
+  },
+  {
+    "slug": "edit-distance",
+    "type": "DSA",
+    "title": "Minimum Edits Between Strings",
+    "difficulty": "HARD",
+    "tags": [
+      "dynamic-programming",
+      "strings"
+    ],
+    "companies": [
+      "google",
+      "microsoft",
+      "adobe"
+    ],
+    "bodyMd": "Given two strings `a` and `b`, return the minimum number of single-character operations needed to transform `a` into `b`. Allowed operations are: **insert** a character, **delete** a character, and **replace** one character with another. Each costs 1.\n\n**Example 1**\n\n```\nInput: a = \"horse\", b = \"ros\"\nOutput: 3\n```\n\n_Explanation:_ horse -> rorse (replace h) -> rose (delete r) -> ros (delete e).\n\n**Example 2**\n\n```\nInput: a = \"intention\", b = \"execution\"\nOutput: 5\n```\n\n**Constraints**\n\n- 0 <= a.length, b.length <= 500\n- a and b consist of lowercase English letters.",
+    "dsa": {
+      "functionName": "minDistance",
+      "params": [
+        {
+          "name": "a",
+          "type": "string"
+        },
+        {
+          "name": "b",
+          "type": "string"
+        }
+      ],
+      "returnType": "int",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(n * m)",
+      "expectedSpaceComplexity": "O(m)",
+      "testCases": [
+        {
+          "input": [
+            "horse",
+            "ros"
+          ],
+          "expected": 3,
+          "sample": true
+        },
+        {
+          "input": [
+            "intention",
+            "execution"
+          ],
+          "expected": 5,
+          "sample": true
+        },
+        {
+          "input": [
+            "",
+            ""
+          ],
+          "expected": 0,
+          "sample": false
+        },
+        {
+          "input": [
+            "",
+            "abc"
+          ],
+          "expected": 3,
+          "sample": false
+        },
+        {
+          "input": [
+            "abc",
+            "abc"
+          ],
+          "expected": 0,
+          "sample": false
+        },
+        {
+          "input": [
+            "kitten",
+            "sitting"
+          ],
+          "expected": 3,
+          "sample": false
+        },
+        {
+          "input": [
+            "sunday",
+            "saturday"
+          ],
+          "expected": 3,
+          "sample": false
+        }
+      ],
+      "hints": [
+        "Look at the last characters of a and b. If they are equal, what do you do? If not, what are your three choices?",
+        "2D DP over prefixes: dp[i][j] = edits to turn a[:i] into b[:j]. Base: dp[i][0] = i, dp[0][j] = j. If a[i-1] == b[j-1], dp[i][j] = dp[i-1][j-1]; else 1 + min(delete dp[i-1][j], insert dp[i][j-1], replace dp[i-1][j-1]).",
+        "prev = [0..m]\nfor i in 1..n:\n    cur = [i] + [0] * m\n    for j in 1..m:\n        if a[i-1] == b[j-1]: cur[j] = prev[j-1]\n        else: cur[j] = 1 + min(prev[j], cur[j-1], prev[j-1])\n    prev = cur\nreturn prev[m]"
+      ],
+      "expectedPoints": [
+        "Defines dp over prefixes and maps each operation to a neighbouring cell.",
+        "Correct base row/column (transforming to/from the empty string).",
+        "O(n * m) time; O(min(n, m)) space with rolling rows.",
+        "Handles empty strings and identical strings.",
+        "Can discuss reconstructing the edit script or weighted operation costs."
+      ],
+      "referenceSolutionPython": "def minDistance(a, b):\n    m = len(b)\n    prev = list(range(m + 1))\n    for i in range(1, len(a) + 1):\n        cur = [i] + [0] * m\n        for j in range(1, m + 1):\n            if a[i - 1] == b[j - 1]:\n                cur[j] = prev[j - 1]\n            else:\n                cur[j] = 1 + min(prev[j], cur[j - 1], prev[j - 1])\n        prev = cur\n    return prev[m]\n"
+    }
+  },
+  {
+    "slug": "network-signal-delay",
+    "type": "DSA",
+    "title": "Signal Propagation Time",
+    "difficulty": "HARD",
+    "tags": [
+      "graphs",
+      "heap",
+      "shortest-path"
+    ],
+    "companies": [
+      "amazon",
+      "uber",
+      "walmart-global-tech"
+    ],
+    "bodyMd": "A network has `n` nodes labelled `1` to `n`. `times[i] = [u, v, w]` is a **directed** link: a signal sent from `u` reaches `v` after `w` time units. A signal is emitted from node `k`.\n\nReturn the time at which **every** node has received the signal (the largest shortest-path distance from `k`). If some node can never receive it, return `-1`.\n\n**Example 1**\n\n```\nInput: times = [[2, 1, 1], [2, 3, 1], [3, 4, 1]], n = 4, k = 2\nOutput: 2\n```\n\n_Explanation:_ Node 4 is reached last via 2 -> 3 -> 4.\n\n**Example 2**\n\n```\nInput: times = [[1, 2, 1]], n = 2, k = 2\nOutput: -1\n```\n\n_Explanation:_ No link leaves node 2.\n\n**Constraints**\n\n- 1 <= k <= n <= 100\n- 0 <= times.length <= 6000\n- 1 <= u, v <= n; u != v\n- 0 <= w <= 100\n- There may be multiple links between the same pair of nodes.",
+    "dsa": {
+      "functionName": "networkDelayTime",
+      "params": [
+        {
+          "name": "times",
+          "type": "int[][]"
+        },
+        {
+          "name": "n",
+          "type": "int"
+        },
+        {
+          "name": "k",
+          "type": "int"
+        }
+      ],
+      "returnType": "int",
+      "comparator": "EXACT",
+      "expectedTimeComplexity": "O(E log V)",
+      "expectedSpaceComplexity": "O(V + E)",
+      "testCases": [
+        {
+          "input": [
+            [
+              [
+                2,
+                1,
+                1
+              ],
+              [
+                2,
+                3,
+                1
+              ],
+              [
+                3,
+                4,
+                1
+              ]
+            ],
+            4,
+            2
+          ],
+          "expected": 2,
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              [
+                1,
+                2,
+                1
+              ]
+            ],
+            2,
+            2
+          ],
+          "expected": -1,
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              [
+                1,
+                2,
+                1
+              ]
+            ],
+            2,
+            1
+          ],
+          "expected": 1,
+          "sample": false
+        },
+        {
+          "input": [
+            [],
+            1,
+            1
+          ],
+          "expected": 0,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              [
+                1,
+                2,
+                5
+              ],
+              [
+                1,
+                3,
+                1
+              ],
+              [
+                3,
+                2,
+                1
+              ]
+            ],
+            3,
+            1
+          ],
+          "expected": 2,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              [
+                1,
+                2,
+                1
+              ],
+              [
+                2,
+                3,
+                2
+              ],
+              [
+                1,
+                3,
+                4
+              ]
+            ],
+            3,
+            1
+          ],
+          "expected": 3,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              [
+                1,
+                2,
+                0
+              ],
+              [
+                2,
+                3,
+                0
+              ]
+            ],
+            3,
+            1
+          ],
+          "expected": 0,
+          "sample": false
+        }
+      ],
+      "hints": [
+        "Is the answer determined by the single slowest route, or by the fastest route to each node?",
+        "Single-source shortest paths with non-negative weights: Dijkstra with a min-heap. The answer is the maximum distance over all nodes, or -1 if any node is unreached. Skip stale heap entries whose distance exceeds the recorded best.",
+        "build adjacency list u -> (v, w)\ndist = {}; heap = [(0, k)]\nwhile heap:\n    d, u = pop min\n    if u in dist: continue\n    dist[u] = d\n    for (v, w) in adj[u]: if v not in dist: push (d + w, v)\nreturn max(dist.values()) if len(dist) == n else -1"
+      ],
+      "expectedPoints": [
+        "Identifies Dijkstra (non-negative weights) and why BFS is insufficient.",
+        "Handles stale heap entries / visited set correctly.",
+        "Takes the maximum of shortest distances and detects unreachable nodes.",
+        "O(E log V) time, O(V + E) space; mentions Bellman-Ford for negative weights."
+      ],
+      "referenceSolutionPython": "import heapq\n\ndef networkDelayTime(times, n, k):\n    adj = [[] for _ in range(n + 1)]\n    for u, v, w in times:\n        adj[u].append((v, w))\n    dist = {}\n    heap = [(0, k)]\n    while heap:\n        d, u = heapq.heappop(heap)\n        if u in dist:\n            continue\n        dist[u] = d\n        for v, w in adj[u]:\n            if v not in dist:\n                heapq.heappush(heap, (d + w, v))\n    return max(dist.values()) if len(dist) == n else -1\n"
+    }
+  },
+  {
+    "slug": "median-two-sorted-arrays",
+    "type": "DSA",
+    "title": "Median of Two Sorted Arrays",
+    "difficulty": "HARD",
+    "tags": [
+      "binary-search",
+      "arrays"
+    ],
+    "companies": [
+      "google",
+      "goldman-sachs",
+      "microsoft"
+    ],
+    "bodyMd": "Given two arrays `a` and `b`, each sorted in non-decreasing order, return the **median** of all their elements combined. If the combined length is even, the median is the average of the two middle values.\n\nThe target complexity is `O(log(min(m, n)))`.\n\n**Example 1**\n\n```\nInput: a = [1, 3], b = [2]\nOutput: 2.0\n```\n\n_Explanation:_ Merged: [1, 2, 3].\n\n**Example 2**\n\n```\nInput: a = [1, 2], b = [3, 4]\nOutput: 2.5\n```\n\n_Explanation:_ Merged: [1, 2, 3, 4]; (2 + 3) / 2 = 2.5.\n\n**Constraints**\n\n- 0 <= a.length, b.length <= 1000\n- 1 <= a.length + b.length <= 2000\n- -10^6 <= a[i], b[i] <= 10^6\n- Answers within 1e-6 of the true median are accepted.",
+    "dsa": {
+      "functionName": "findMedianSortedArrays",
+      "params": [
+        {
+          "name": "a",
+          "type": "int[]"
+        },
+        {
+          "name": "b",
+          "type": "int[]"
+        }
+      ],
+      "returnType": "double",
+      "comparator": "FLOAT_TOLERANCE",
+      "expectedTimeComplexity": "O(log(min(m, n)))",
+      "expectedSpaceComplexity": "O(1)",
+      "testCases": [
+        {
+          "input": [
+            [
+              1,
+              3
+            ],
+            [
+              2
+            ]
+          ],
+          "expected": 2.0,
+          "sample": true
+        },
+        {
+          "input": [
+            [
+              1,
+              2
+            ],
+            [
+              3,
+              4
+            ]
+          ],
+          "expected": 2.5,
+          "sample": true
+        },
+        {
+          "input": [
+            [],
+            [
+              1
+            ]
+          ],
+          "expected": 1.0,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          "expected": 0.0,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              2
+            ],
+            []
+          ],
+          "expected": 2.0,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              1,
+              3,
+              8,
+              9,
+              15
+            ],
+            [
+              7,
+              11,
+              18,
+              19,
+              21,
+              25
+            ]
+          ],
+          "expected": 11.0,
+          "sample": false
+        },
+        {
+          "input": [
+            [
+              -5,
+              -3,
+              -1
+            ],
+            [
+              -2,
+              4,
+              6,
+              8
+            ]
+          ],
+          "expected": -1.0,
+          "sample": false
+        }
+      ],
+      "hints": [
+        "A median splits the combined data into a left half and a right half. Could you choose how many elements of the smaller array go into the left half?",
+        "Binary search on a partition of the shorter array. If i elements of a go left, then half - i elements of b go left. The partition is correct when a[i-1] <= b[j] and b[j-1] <= a[i]; otherwise move i left or right. Treat out-of-range neighbours as -inf / +inf.",
+        "ensure len(a) <= len(b); half = (m + n + 1) // 2\nlo, hi = 0, m\nwhile lo <= hi:\n    i = (lo + hi) // 2; j = half - i\n    compare aLeft, aRight, bLeft, bRight (±inf at edges)\n    if aLeft > bRight: hi = i - 1\n    elif bLeft > aRight: lo = i + 1\n    else: return max(lefts) if odd else (max(lefts) + min(rights)) / 2"
+      ],
+      "expectedPoints": [
+        "Mentions the O(m + n) merge baseline first.",
+        "Binary searches the partition of the shorter array for O(log(min(m, n))).",
+        "Uses sentinels for empty sides of the partition.",
+        "Handles odd/even total length and one empty array.",
+        "Explains the correctness condition of the partition."
+      ],
+      "referenceSolutionPython": "def findMedianSortedArrays(a, b):\n    if len(a) > len(b):\n        a, b = b, a\n    m, n = len(a), len(b)\n    half = (m + n + 1) // 2\n    lo, hi = 0, m\n    NEG, POS = float('-inf'), float('inf')\n    while lo <= hi:\n        i = (lo + hi) // 2\n        j = half - i\n        a_left = a[i - 1] if i > 0 else NEG\n        a_right = a[i] if i < m else POS\n        b_left = b[j - 1] if j > 0 else NEG\n        b_right = b[j] if j < n else POS\n        if a_left > b_right:\n            hi = i - 1\n        elif b_left > a_right:\n            lo = i + 1\n        else:\n            left_max = max(a_left, b_left)\n            if (m + n) % 2 == 1:\n                return float(left_max)\n            return (left_max + min(a_right, b_right)) / 2.0\n    return 0.0\n"
+    }
+  }
+]

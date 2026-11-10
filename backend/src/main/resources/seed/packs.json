@@ -1,0 +1,53 @@
+[
+  {
+    "slug": "amazon-leadership-principles",
+    "name": "Amazon Leadership Principles",
+    "description": "Eight STAR-style questions mapped one-to-one to Amazon's Leadership Principles, with follow-up probes in the style of a bar-raiser loop.",
+    "mode": "BEHAVIOURAL",
+    "company": "amazon",
+    "pro": true,
+    "questions": [
+      "amazon-lp-customer-obsession",
+      "amazon-lp-ownership",
+      "amazon-lp-invent-and-simplify",
+      "amazon-lp-are-right-a-lot",
+      "amazon-lp-learn-and-be-curious",
+      "amazon-lp-dive-deep",
+      "amazon-lp-backbone-disagree-commit",
+      "amazon-lp-deliver-results"
+    ]
+  },
+  {
+    "slug": "google-dsa-essentials",
+    "name": "Google DSA Essentials",
+    "description": "A balanced set of hashing, sliding-window, graph, binary-search and dynamic-programming problems that mirrors the breadth of a Google coding round.",
+    "mode": "DSA",
+    "company": "google",
+    "pro": false,
+    "questions": [
+      "two-sum-indices",
+      "longest-unique-substring",
+      "merge-overlapping-intervals",
+      "course-order-topological",
+      "subarray-sum-equals-k",
+      "longest-common-subsequence",
+      "trapping-rain-water",
+      "median-two-sorted-arrays"
+    ]
+  },
+  {
+    "slug": "flipkart-lld",
+    "name": "Flipkart Machine Coding & LLD",
+    "description": "Object-oriented design problems in the style of Flipkart's machine-coding round: clean domain models, design patterns and concurrency-safe core flows.",
+    "mode": "LLD",
+    "company": "flipkart",
+    "pro": true,
+    "questions": [
+      "parking-lot",
+      "expense-sharing-app",
+      "lru-cache-with-ttl",
+      "movie-ticket-booking",
+      "food-delivery-order-lifecycle"
+    ]
+  }
+]

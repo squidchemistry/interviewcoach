@@ -1,0 +1,149 @@
+[
+  {
+    "key": "DSA",
+    "changelog": "Initial rubric",
+    "definition": {
+      "competencies": [
+        {
+          "competency": "PROBLEM_SOLVING", "label": "Problem solving", "weight": 0.30,
+          "criteria": [
+            {"id": "approach", "description": "Reaches a correct, efficient approach and justifies it before coding", "levels": {"0-3": "No workable approach", "4-6": "Brute force only or needs heavy guidance", "7-8": "Optimal or near-optimal with minor gaps", "9-10": "Optimal, well-justified, compares alternatives"}},
+            {"id": "complexity", "description": "States and derives time and space complexity correctly", "levels": {"0-3": "Missing or wrong", "4-6": "Partially correct", "7-8": "Correct with brief derivation", "9-10": "Correct, derived, discusses trade-offs"}}
+          ]
+        },
+        {
+          "competency": "CODE_QUALITY", "label": "Code quality", "weight": 0.20,
+          "criteria": [
+            {"id": "correctness", "description": "Code is correct on the tests (objective signal)", "levels": {"0-3": "Fails most tests", "4-6": "Passes samples only", "7-8": "Passes most hidden tests", "9-10": "Passes all tests"}},
+            {"id": "readability", "description": "Naming, structure and idiomatic use of the language", "levels": {"0-3": "Hard to follow", "4-6": "Readable with issues", "7-8": "Clean", "9-10": "Production quality"}}
+          ]
+        },
+        {
+          "competency": "COMMUNICATION", "label": "Communication", "weight": 0.20,
+          "criteria": [
+            {"id": "thinking_aloud", "description": "Explains reasoning while working; responds well to probes", "levels": {"0-3": "Silent or confusing", "4-6": "Explains when asked", "7-8": "Clear and proactive", "9-10": "Structured, concise, engaging"}}
+          ]
+        },
+        {
+          "competency": "DESIGN", "label": "Design", "weight": 0.10,
+          "criteria": [
+            {"id": "data_structures", "description": "Chooses appropriate data structures and abstractions", "levels": {"0-3": "Inappropriate choices", "4-6": "Works but suboptimal", "7-8": "Appropriate", "9-10": "Elegant and justified"}}
+          ]
+        },
+        {
+          "competency": "EDGE_CASES", "label": "Edge cases", "weight": 0.20,
+          "criteria": [
+            {"id": "edge_cases", "description": "Identifies and handles boundary inputs (empty, duplicates, extremes)", "levels": {"0-3": "None considered", "4-6": "Some, after prompting", "7-8": "Most, proactively", "9-10": "Comprehensive and tested"}}
+          ]
+        }
+      ],
+      "penalties": {"hintLevel1": 0.5, "hintLevel2": 1.0, "hintLevel3": 2.0}
+    }
+  },
+  {
+    "key": "LLD",
+    "changelog": "Initial rubric",
+    "definition": {
+      "competencies": [
+        {
+          "competency": "PROBLEM_SOLVING", "label": "Requirements & scoping", "weight": 0.20,
+          "criteria": [
+            {"id": "requirements", "description": "Clarifies requirements and scopes the problem", "levels": {"0-3": "Jumps in blindly", "4-6": "Some clarification", "7-8": "Clear scope and assumptions", "9-10": "Prioritised, explicit, well-reasoned"}}
+          ]
+        },
+        {
+          "competency": "CODE_QUALITY", "label": "Interfaces & code", "weight": 0.15,
+          "criteria": [
+            {"id": "interfaces", "description": "Clear class/method signatures and responsibilities", "levels": {"0-3": "Vague", "4-6": "Some clear APIs", "7-8": "Clean interfaces", "9-10": "Precise and minimal"}}
+          ]
+        },
+        {
+          "competency": "COMMUNICATION", "label": "Communication", "weight": 0.20,
+          "criteria": [
+            {"id": "explanation", "description": "Explains the design and responds to probes", "levels": {"0-3": "Unclear", "4-6": "Understandable", "7-8": "Clear", "9-10": "Crisp and structured"}}
+          ]
+        },
+        {
+          "competency": "DESIGN", "label": "Object-oriented design", "weight": 0.35,
+          "criteria": [
+            {"id": "solid", "description": "Applies SOLID; responsibilities are cohesive", "levels": {"0-3": "God classes", "4-6": "Some separation", "7-8": "Mostly SOLID", "9-10": "Clean, justified boundaries"}},
+            {"id": "patterns", "description": "Uses design patterns where they fit and explains why", "levels": {"0-3": "None or misused", "4-6": "Named but shallow", "7-8": "Appropriate", "9-10": "Well-chosen with trade-offs"}},
+            {"id": "extensibility", "description": "Design absorbs new requirements with small changes", "levels": {"0-3": "Rigid", "4-6": "Some extension points", "7-8": "Extensible", "9-10": "Open/closed throughout"}}
+          ]
+        },
+        {
+          "competency": "EDGE_CASES", "label": "Concurrency & failure modes", "weight": 0.10,
+          "criteria": [
+            {"id": "concurrency", "description": "Handles races, consistency and failure scenarios", "levels": {"0-3": "Ignored", "4-6": "Mentioned", "7-8": "Concrete approach", "9-10": "Correct and justified"}}
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "key": "BEHAVIOURAL",
+    "changelog": "Initial rubric",
+    "definition": {
+      "competencies": [
+        {
+          "competency": "PROBLEM_SOLVING", "label": "Task & action", "weight": 0.25,
+          "criteria": [
+            {"id": "ownership", "description": "Clear personal responsibility and concrete actions (I, not we)", "levels": {"0-3": "Vague or team-only", "4-6": "Some personal actions", "7-8": "Clear ownership", "9-10": "Decisive, reasoned actions"}}
+          ]
+        },
+        {
+          "competency": "COMMUNICATION", "label": "Structure & clarity", "weight": 0.45,
+          "criteria": [
+            {"id": "structure", "description": "Story follows a clear Situation → Task → Action → Result arc", "levels": {"0-3": "Rambling", "4-6": "Partially structured", "7-8": "Well structured", "9-10": "Tight and compelling"}},
+            {"id": "specificity", "description": "Specific context, people, numbers and timelines", "levels": {"0-3": "Generic", "4-6": "Some specifics", "7-8": "Specific", "9-10": "Vivid and precise"}}
+          ]
+        },
+        {
+          "competency": "EDGE_CASES", "label": "Result & impact", "weight": 0.30,
+          "criteria": [
+            {"id": "impact", "description": "Measurable result tied to the goal", "levels": {"0-3": "No result", "4-6": "Qualitative result", "7-8": "Measurable result", "9-10": "Significant, quantified impact"}},
+            {"id": "reflection", "description": "Lessons learned and what they would do differently", "levels": {"0-3": "None", "4-6": "Generic", "7-8": "Genuine", "9-10": "Insightful and applied since"}}
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "key": "RESUME_DEEP_DIVE",
+    "changelog": "Initial rubric",
+    "definition": {
+      "competencies": [
+        {
+          "competency": "PROBLEM_SOLVING", "label": "Engineering judgement", "weight": 0.20,
+          "criteria": [
+            {"id": "tradeoffs", "description": "Explains why choices were made and their trade-offs", "levels": {"0-3": "No rationale", "4-6": "Some rationale", "7-8": "Clear trade-offs", "9-10": "Nuanced, considers alternatives"}}
+          ]
+        },
+        {
+          "competency": "CODE_QUALITY", "label": "Technical depth", "weight": 0.15,
+          "criteria": [
+            {"id": "depth", "description": "Goes below the surface on implementation details", "levels": {"0-3": "Surface level", "4-6": "Some depth", "7-8": "Solid depth", "9-10": "Expert depth"}}
+          ]
+        },
+        {
+          "competency": "COMMUNICATION", "label": "Communication", "weight": 0.30,
+          "criteria": [
+            {"id": "clarity", "description": "Explains the project clearly to an engineer new to it", "levels": {"0-3": "Confusing", "4-6": "Understandable", "7-8": "Clear", "9-10": "Excellent narrative"}}
+          ]
+        },
+        {
+          "competency": "DESIGN", "label": "Architecture", "weight": 0.25,
+          "criteria": [
+            {"id": "architecture", "description": "Understands the system's architecture and how it would scale", "levels": {"0-3": "Unclear", "4-6": "Partial", "7-8": "Clear", "9-10": "Deep, with scaling plan"}}
+          ]
+        },
+        {
+          "competency": "EDGE_CASES", "label": "Failures & testing", "weight": 0.10,
+          "criteria": [
+            {"id": "failures", "description": "Discusses failures, debugging and testing honestly", "levels": {"0-3": "None", "4-6": "Generic", "7-8": "Concrete", "9-10": "Insightful post-mortem"}}
+          ]
+        }
+      ]
+    }
+  }
+]
